@@ -34,3 +34,14 @@ tasks.withType(KotlinCompile) {
 tasks.named('test') {
     useJUnitPlatform()
 }
+project(':api'){
+    archivesBaseName = 'api'
+
+    bootJar {
+        enabled = true //実行可能Jarを作成しない
+    }
+
+    jar {
+        enabled = true //Jarを作成する
+    }
+}
