@@ -1,0 +1,23 @@
+package com.example.demo.usecase
+
+import com.example.demo.exception.NotFoundException
+import com.example.demo.repository.EmployeeMapper
+import com.example.demo.response.GetEmployeeResponse
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
+interface GetEmployeeUseCase {
+    fun execute(employeeId: Long): GetEmployeeResponse
+}
+
+@Service
+@Transactional(readOnly = true)
+class GetEmployeeUseCaseCaseImpl(
+    private val employeeMapper: EmployeeMapper
+) : GetEmployeeUseCase {
+    override fun execute(employeeId: Long): GetEmployeeResponse {
+        return employeeMapper.findEmployeeAndSkillById(employeeId)?.let {
+            GetEmployeeResponse.of(it)
+        } ?: throw NotFoundException("employee not exists. id: $employeeId")
+    }
+}
