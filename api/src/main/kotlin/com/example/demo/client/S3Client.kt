@@ -1,4 +1,4 @@
-package com.example.demo
+package com.example.demo.client
 
 import com.amazonaws.HttpMethod
 import com.amazonaws.auth.AWSStaticCredentialsProvider

@@ -1,6 +1,6 @@
 package com.example.demo.usecase
 
-import com.example.demo.S3Client
+import com.example.demo.client.S3Client
 import com.example.demo.entity.Employee
 import com.example.demo.entity.EmployeeSkill
 import com.example.demo.repository.EmployeeMapper
