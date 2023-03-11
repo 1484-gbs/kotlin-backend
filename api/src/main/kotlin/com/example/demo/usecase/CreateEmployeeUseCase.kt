@@ -44,6 +44,7 @@ class CreateEmployeeUseCaseCaseImpl(
             gender = request.gender,
             tel = request.tel,
             positionId = request.positionId,
+            salaryOfMonth =  request.salaryOfMonth
         )
 
         employeeMapper.create(employee)

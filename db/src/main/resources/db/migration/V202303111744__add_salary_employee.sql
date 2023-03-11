@@ -1,0 +1,1 @@
+ALTER TABLE `employee` ADD COLUMN `salary_of_month` INT NOT NULL

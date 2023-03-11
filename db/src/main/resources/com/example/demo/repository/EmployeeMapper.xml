@@ -12,7 +12,8 @@
           birthday,
           gender,
           tel,
-          position_id
+          position_id,
+          salary_of_month
         )
         VALUES (
           #{entity.firstName},
@@ -22,7 +23,8 @@
           #{entity.birthday},
           #{entity.gender},
           #{entity.tel},
-          #{entity.positionId}
+          #{entity.positionId},
+          #{entity.salaryOfMonth}
         )
     </insert>
     <select id="findById" resultType="com.example.demo.entity.Employee">
@@ -37,7 +39,8 @@
           first_name_kana = #{entity.firstNameKana},
           last_name_kana = #{entity.lastNameKana},
           tel = #{entity.tel},
-          position_id = #{entity.positionId}
+          position_id = #{entity.positionId},
+          salary_of_month = #{entity.salaryOfMonth}
         WHERE
           employee_id = #{entity.employeeId}
     </update>
@@ -58,7 +61,8 @@
           e.gender,
           e.tel,
           e.position_id,
-          es.skill_id
+          es.skill_id,
+          e.salary_of_month
         FROM
           employee e
         LEFT JOIN
@@ -76,6 +80,7 @@
         <result column="gender" property="gender" />
         <result column="tel" property="tel" />
         <result column="position_id" property="positionId" />
+        <result column="salary_of_month" property="salaryOfMonth" />
         <collection property="skills" ofType="long">
             <result column="skill_id"/>
         </collection>

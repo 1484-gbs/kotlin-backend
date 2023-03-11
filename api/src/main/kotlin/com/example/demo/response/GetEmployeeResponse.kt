@@ -25,7 +25,9 @@ data class GetEmployeeResponse(
     val positionId: Long,
     val skills: List<Long>,
     @JsonProperty("photo_url")
-    val photoUrl: String?
+    val photoUrl: String?,
+    @JsonProperty("salary_of_month")
+    val salaryOfMonth: Int
     ) {
     companion object {
         fun of(entity: EmployeeAndSkill, photoUrl: String?): GetEmployeeResponse {
@@ -40,7 +42,8 @@ data class GetEmployeeResponse(
                 tel = entity.tel,
                 positionId = entity.positionId,
                 skills = entity.skills,
-                photoUrl = photoUrl
+                photoUrl = photoUrl,
+                salaryOfMonth = entity.salaryOfMonth
             )
         }
     }

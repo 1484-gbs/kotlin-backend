@@ -45,6 +45,7 @@ class PatchEmployeeUseCaseCaseImpl(
                 gender = GenderType.FEMALE, // Mapperでupdateしない
                 tel = request.tel,
                 positionId = request.positionId,
+                salaryOfMonth =  request.salaryOfMonth
             )
         )
 

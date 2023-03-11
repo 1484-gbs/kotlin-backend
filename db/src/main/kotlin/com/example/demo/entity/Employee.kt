@@ -12,6 +12,7 @@ data class Employee(
     val birthday: LocalDate,
     val gender: GenderType,
     val tel: String?,
-    val positionId: Long
+    val positionId: Long,
+    val salaryOfMonth: Int
 )
 

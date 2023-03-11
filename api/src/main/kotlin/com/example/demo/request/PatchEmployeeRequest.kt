@@ -21,4 +21,6 @@ data class PatchEmployeeRequest(
     val photo: String?,
     @JsonProperty("is_delete_photo")
     val isDeletePhoto: Boolean? = false,
+    @JsonProperty("salary_of_month")
+    val salaryOfMonth: Int,
 )
