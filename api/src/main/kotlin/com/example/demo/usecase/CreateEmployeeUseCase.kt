@@ -1,5 +1,6 @@
 package com.example.demo.usecase
 
+import com.example.demo.S3Client
 import com.example.demo.entity.Employee
 import com.example.demo.entity.EmployeeSkill
 import com.example.demo.repository.EmployeeMapper
@@ -8,6 +9,7 @@ import com.example.demo.repository.PositionMapper
 import com.example.demo.repository.SkillMapper
 import com.example.demo.request.CreateEmployeeRequest
 import com.example.demo.response.CreateEmployeeResponse
+import com.example.demo.type.S3FileType
 import com.example.demo.usecase.common.AbstractEmployeeUseCase
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,11 +20,12 @@ interface CreateEmployeeUseCase {
 
 @Service
 @Transactional
-class CreateEmployeeUseCaseCaseImpl (
+class CreateEmployeeUseCaseCaseImpl(
     private val employeeMapper: EmployeeMapper,
     private val employeeSkillMapper: EmployeeSkillMapper,
     val skillMapper: SkillMapper,
-    val positionMapper: PositionMapper
+    val positionMapper: PositionMapper,
+    private val s3Client: S3Client
 ) : CreateEmployeeUseCase, AbstractEmployeeUseCase(
     skillMapper,
     positionMapper
@@ -58,6 +61,11 @@ class CreateEmployeeUseCaseCaseImpl (
                 }.toList()
             )
         }
+
+        request.photo?.let {
+            s3Client.upload(request.photo, employee.employeeId.toString(), S3FileType.PHOTO.value)
+        }
+
         return CreateEmployeeResponse(employee.employeeId)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.usecase
 
+import com.example.demo.S3Client
 import com.example.demo.entity.Employee
 import com.example.demo.entity.EmployeeSkill
 import com.example.demo.exception.NotFoundException
@@ -9,6 +10,7 @@ import com.example.demo.repository.PositionMapper
 import com.example.demo.repository.SkillMapper
 import com.example.demo.request.PatchEmployeeRequest
 import com.example.demo.type.GenderType
+import com.example.demo.type.S3FileType
 import com.example.demo.usecase.common.AbstractEmployeeUseCase
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,7 +26,8 @@ class PatchEmployeeUseCaseCaseImpl(
     private val employeeMapper: EmployeeMapper,
     val skillMapper: SkillMapper,
     val positionMapper: PositionMapper,
-    private val employeeSkillMapper: EmployeeSkillMapper
+    private val employeeSkillMapper: EmployeeSkillMapper,
+    private val s3Client: S3Client
 ) : PatchEmployeeUseCase, AbstractEmployeeUseCase(skillMapper, positionMapper) {
     override fun execute(id: Long, request: PatchEmployeeRequest) {
         employeeMapper.findById(id) ?: throw NotFoundException("employee not exists. id: $id.")
@@ -60,5 +63,14 @@ class PatchEmployeeUseCaseCaseImpl(
             )
         }
 
+        request.photo?.let {
+            s3Client.upload(request.photo, id.toString(), S3FileType.PHOTO.value)
+        } ?: run {
+            request.isDeletePhoto.takeIf {
+                it == true
+            }?.let {
+                s3Client.delete(id.toString(), S3FileType.PHOTO.value)
+            }
+        }
     }
 }

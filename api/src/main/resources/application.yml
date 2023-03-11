@@ -17,3 +17,10 @@ logging:
 app:
   postal-code:
     url: https://zipcloud.ibsnet.co.jp/api/search
+
+  aws:
+    s3:
+      url: http://127.0.0.1:9000
+      bucket: employee
+      access-key: minioadmin
+      secret-key: minioadmin

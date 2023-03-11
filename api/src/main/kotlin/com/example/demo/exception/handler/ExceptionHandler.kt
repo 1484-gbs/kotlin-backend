@@ -55,7 +55,8 @@ class ExceptionHandler {
     fun internalServerError(e: Exception): ErrorResponse {
         return ErrorResponse(
             message = "system error.",
-            cause = e.cause.toString()
+            detail = e.message,
+            cause = e.cause?.toString()
         )
     }
 }

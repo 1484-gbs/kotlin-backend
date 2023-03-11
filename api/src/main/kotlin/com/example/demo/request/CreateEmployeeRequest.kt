@@ -22,8 +22,10 @@ data class CreateEmployeeRequest(
     @JsonProperty("position_id")
     val positionId: Long,
     @JsonProperty("skills")
-    val skills: List<Long>
-) {
+    val skills: List<Long>,
+    @JsonProperty("photo")
+    val photo: String?,
+    ) {
     data class Birthday(
         val year: Int,
         val month: Int,

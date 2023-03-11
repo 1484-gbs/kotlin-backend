@@ -16,5 +16,9 @@ data class PatchEmployeeRequest(
     @JsonProperty("position_id")
     val positionId: Long,
     @JsonProperty("skills")
-    val skills: List<Long>
+    val skills: List<Long>,
+    @JsonProperty("photo")
+    val photo: String?,
+    @JsonProperty("is_delete_photo")
+    val isDeletePhoto: Boolean? = false,
 )
