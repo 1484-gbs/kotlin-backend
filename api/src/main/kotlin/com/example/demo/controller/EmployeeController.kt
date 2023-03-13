@@ -7,15 +7,7 @@ import com.example.demo.response.GetEmployeeListResponse
 import com.example.demo.response.GetEmployeeResponse
 import com.example.demo.type.GenderType
 import com.example.demo.usecase.*
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class EmployeeController(
@@ -24,6 +16,7 @@ class EmployeeController(
     private val patchEmployeeUseCase: PatchEmployeeUseCase,
     private val deleteEmployeeUseCase: DeleteEmployeeUseCase,
     private val getEmployeeListUseCase: GetEmployeeListUseCase,
+    private val calcEmployeeSalaryUseCase: CalcEmployeeSalaryUseCase,
 ) : AbstractController() {
 
     @PostMapping("/employee")
@@ -59,5 +52,11 @@ class EmployeeController(
         @RequestParam("position_id") positionId: Long?,
     ): GetEmployeeListResponse {
         return getEmployeeListUseCase.execute(name, kana, gender, positionId)
+    }
+
+    @PostMapping("/employee/calc_salary")
+    @ResponseBody
+    fun calcEmployeeSalary() {
+        calcEmployeeSalaryUseCase.execute()
     }
 }

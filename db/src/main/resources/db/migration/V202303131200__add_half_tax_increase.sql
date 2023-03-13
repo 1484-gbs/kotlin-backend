@@ -1,0 +1,1 @@
+ALTER TABLE `increase` ADD COLUMN `half_tax` DECIMAL(7,2) NOT NULL

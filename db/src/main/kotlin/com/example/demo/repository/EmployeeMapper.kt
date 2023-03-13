@@ -20,4 +20,5 @@ interface EmployeeMapper {
         @Param("gender") gender: GenderType?,
         @Param("positionId") positionId: Long?,
     ): List<EmployeeList>
+    fun findAll(): List<Employee>
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.repository.EmployeeSalaryMapper">
+    <insert id="upsert">
+        INSERT INTO employee_salary (
+          employee_id,
+          year,
+          month,
+          salary_of_month,
+          health_insurance,
+          employment_insurance,
+          welfare_pension,
+          income_tax,
+          salary_paid
+        )
+        VALUES
+        <foreach collection="entities" item="entity" separator=",">
+        (
+          #{entity.employeeId},
+          #{entity.year},
+          #{entity.month},
+          #{entity.salaryOfMonth},
+          #{entity.healthInsurance},
+          #{entity.employmentIncrease},
+          #{entity.welfarePension},
+          #{entity.incomeTax},
+          #{entity.salaryPaid}
+        )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+          health_insurance = VALUES(health_insurance),
+          employment_insurance = VALUES(employment_insurance),
+          welfare_pension = VALUES(welfare_pension),
+          income_tax = VALUES(income_tax),
+          salary_paid = VALUES(salary_paid)
+    </insert>
+</mapper>

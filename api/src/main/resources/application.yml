@@ -24,3 +24,6 @@ app:
       bucket: employee
       access-key: minioadmin
       secret-key: minioadmin
+  rate:
+    employment-increase: '0.003'
+    welfare-increase: '0.20'

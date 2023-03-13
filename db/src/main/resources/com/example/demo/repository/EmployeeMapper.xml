@@ -122,4 +122,7 @@
         </where>
         ORDER BY p.display_order, e.employee_id
     </select>
+    <select id="findAll" resultType="com.example.demo.entity.Employee">
+        SELECT * FROM employee
+    </select>
 </mapper>
