@@ -7,6 +7,7 @@ import com.example.demo.response.GetEmployeeListResponse
 import com.example.demo.response.GetEmployeeResponse
 import com.example.demo.type.GenderType
 import com.example.demo.usecase.*
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,7 +22,7 @@ class EmployeeController(
 
     @PostMapping("/employee")
     @ResponseBody
-    fun create(@RequestBody request: CreateEmployeeRequest): CreateEmployeeResponse {
+    fun create(@RequestBody @Validated request: CreateEmployeeRequest): CreateEmployeeResponse {
         return createEmployeeUseCase.execute(request)
     }
 
@@ -33,7 +34,7 @@ class EmployeeController(
 
     @PatchMapping("/employee/{id}")
     @ResponseBody
-    fun patch(@PathVariable id: Long, @RequestBody request: PatchEmployeeRequest) {
+    fun patch(@PathVariable id: Long, @RequestBody @Validated request: PatchEmployeeRequest) {
         patchEmployeeUseCase.execute(id, request)
     }
 
