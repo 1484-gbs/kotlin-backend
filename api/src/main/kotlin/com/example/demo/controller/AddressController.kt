@@ -12,6 +12,9 @@ class AddressController(
         private val getAddressUseCase: GetAddressUseCase
 ): AbstractController() {
 
+    /**
+     * 住所検索
+     */
     @GetMapping("/address")
     @ResponseBody
     fun getAddress(@RequestParam("zipcode") zipcode: String): GetAddressResponse {

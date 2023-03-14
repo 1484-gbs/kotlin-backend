@@ -11,6 +11,9 @@ class SkillController(
         private val getSkillPerTypeUseCase: GetSkillPerTypeUseCase
 ): AbstractController() {
 
+    /**
+     * スキルマスタ一覧取得
+     */
     @GetMapping("/skill/per_type")
     @ResponseBody
     fun getSkillPerType(): GetSkillPerTypeResponse {

@@ -11,6 +11,9 @@ class PositionController(
         private val getPositionUseCase: GetPositionUseCase
 ): AbstractController() {
 
+    /**
+     * 役職マスタ一覧取得
+     */
     @GetMapping("/position")
     @ResponseBody
     fun getPositions(): GetPositionResponse {
