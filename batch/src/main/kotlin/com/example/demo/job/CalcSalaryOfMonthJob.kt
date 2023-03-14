@@ -1,6 +1,6 @@
 package com.example.demo.job
 
-import com.example.demo.JobNameType
+import com.example.demo.type.JobNameType
 import com.example.demo.tasklet.CalcSalaryOfMonthTasklet
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step

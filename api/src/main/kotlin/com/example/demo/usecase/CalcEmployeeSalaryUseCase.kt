@@ -1,6 +1,7 @@
 package com.example.demo.usecase
 
 import com.example.demo.exception.ApplicationException
+import com.example.demo.type.JobNameType
 import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
@@ -20,7 +21,7 @@ class CalcEmployeeSalaryUseCaseImpl(
 ) : CalcEmployeeSalaryUseCase {
     override fun execute() {
         val params: JobParameters = JobParametersBuilder()
-            .addString("name", "calcEmployeeSalary")
+            .addString("name", JobNameType.CALC_SALARY_OF_MONTH.value)
             .addString("uuid", UUID.randomUUID().toString())
             .toJobParameters()
 

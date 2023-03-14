@@ -1,0 +1,12 @@
+spring:
+  batch:
+    initialize-schema: always
+    # https://www.baeldung.com/spring-boot-3-migration#2-running-multiple-jobs
+    # java -jar batch-0.0.1-SNAPSHOT.jar --spring.batch.job.name=demo --spring.batch.job.enabled=true
+    job:
+      enabled: true
+      name: demo
+app:
+  rate:
+    employment-increase: '0.003'
+    welfare-increase: '0.20'
