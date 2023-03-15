@@ -11,11 +11,13 @@ import com.example.demo.request.CreateEmployeeRequest
 import com.example.demo.response.CreateEmployeeResponse
 import com.example.demo.type.S3FileType
 import com.example.demo.usecase.common.AbstractEmployeeUseCase
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 interface CreateEmployeeUseCase {
-    fun execute(request: CreateEmployeeRequest): CreateEmployeeResponse
+    fun execute(request: CreateEmployeeRequest, loginId: String): CreateEmployeeResponse
 }
 
 @Service
@@ -30,9 +32,10 @@ class CreateEmployeeUseCaseCaseImpl(
     skillMapper,
     positionMapper
 ) {
-    override fun execute(request: CreateEmployeeRequest): CreateEmployeeResponse {
+    override fun execute(request: CreateEmployeeRequest, loginId: String): CreateEmployeeResponse {
         super.validatePosition(request.positionId)
         super.validateSkill(request.skills)
+        val now = LocalDateTime.now()
 
         val employee = Employee(
             employeeId = 0, // auto_increment
@@ -44,7 +47,13 @@ class CreateEmployeeUseCaseCaseImpl(
             gender = request.gender,
             tel = request.tel,
             positionId = request.positionId,
-            salaryOfMonth =  request.salaryOfMonth
+            salaryOfMonth =  request.salaryOfMonth,
+            loginId = request.loginId,
+            password = BCryptPasswordEncoder().encode(request.password),
+            createdBy = loginId,
+            createdAt = now,
+            updatedBy = loginId,
+            updatedAt = now,
         )
 
         employeeMapper.create(employee)
@@ -57,7 +66,9 @@ class CreateEmployeeUseCaseCaseImpl(
                     EmployeeSkill(
                         employeeSkillId = 0, // auto_increment
                         employeeId = employee.employeeId,
-                        skillId = it
+                        skillId = it,
+                        lastModifiedBy = loginId,
+                        lastModifiedAt = now,
                     )
                 }.toList()
             )

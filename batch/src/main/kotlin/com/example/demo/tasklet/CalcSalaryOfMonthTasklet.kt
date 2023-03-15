@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Component
 @StepScope
@@ -33,7 +34,6 @@ class CalcSalaryOfMonthTasklet(
         runCatching {
             val employees = employeeMapper.findAll()
             val increases = increaseMapper.findAll()
-            val now = LocalDate.now()
             val rateEmploymentIncrease = BigDecimal(rateConfig.employmentIncrease)
             val rateWelfareIncrease = BigDecimal(rateConfig.welfareIncrease)
 
@@ -65,6 +65,8 @@ class CalcSalaryOfMonthTasklet(
                     .subtract(healthInsurance)
                     .subtract(welfarePension)
 
+                val now = LocalDateTime.now()
+
                 EmployeeSalary(
                     employeeSalaryId = 0,
                     employeeId = e.employeeId,
@@ -75,7 +77,11 @@ class CalcSalaryOfMonthTasklet(
                     welfarePension = welfarePension.toInt(),
                     employmentIncrease = employmentIncrease.toInt(),
                     incomeTax = 0, // TODO
-                    salaryPaid = salaryPaid.toInt()
+                    salaryPaid = salaryPaid.toInt(),
+                    createdBy = "loginId",
+                    createdAt = now,
+                    updatedBy = "loginId",
+                    updatedAt = now,
                 )
             }.toList()
 

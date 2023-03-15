@@ -41,6 +41,10 @@ data class CreateEmployeeRequest(
     @JsonProperty("salary_of_month")
     @field:SalaryOfMonth
     val salaryOfMonth: Int,
+    @JsonProperty("login_id")
+    val loginId: String,
+    @JsonProperty("password")
+    val password: String
 ) {
     data class Birthday(
         @field:Min(1000)

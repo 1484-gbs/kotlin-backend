@@ -13,7 +13,13 @@
           gender,
           tel,
           position_id,
-          salary_of_month
+          salary_of_month,
+          login_id,
+          password,
+          created_by,
+          created_at,
+          updated_by,
+          updated_at
         )
         VALUES (
           #{entity.firstName},
@@ -24,7 +30,13 @@
           #{entity.gender},
           #{entity.tel},
           #{entity.positionId},
-          #{entity.salaryOfMonth}
+          #{entity.salaryOfMonth},
+          #{entity.loginId},
+          #{entity.password},
+          #{entity.createdBy},
+          #{entity.createdAt},
+          #{entity.updatedBy},
+          #{entity.updatedAt}
         )
     </insert>
     <select id="findById" resultType="com.example.demo.entity.Employee">
@@ -33,16 +45,36 @@
     <update id="update">
         UPDATE
           employee
-        SET
+        <set>
           first_name = #{entity.firstName},
           last_name = #{entity.lastName},
           first_name_kana = #{entity.firstNameKana},
           last_name_kana = #{entity.lastNameKana},
           tel = #{entity.tel},
           position_id = #{entity.positionId},
-          salary_of_month = #{entity.salaryOfMonth}
+          salary_of_month = #{entity.salaryOfMonth},
+            <if test="entity.loginId != ''">
+                login_id = #{entity.loginId},
+            </if>
+            <if test="entity.password != ''">
+                password = #{entity.password},
+            </if>
+          updated_by = #{entity.updatedBy},
+          updated_at = #{entity.updatedAt}
+        </set>
         WHERE
           employee_id = #{entity.employeeId}
+    </update>
+    <update id="updatePasswordByLoginId">
+        UPDATE
+        employee
+        <set>
+            password = #{password},
+            updated_by = #{loginId},
+            updated_at = #{now}
+        </set>
+        WHERE
+            login_id = #{loginId}
     </update>
     <delete id="delete">
         DELETE FROM
@@ -124,5 +156,8 @@
     </select>
     <select id="findAll" resultType="com.example.demo.entity.Employee">
         SELECT * FROM employee
+    </select>
+    <select id="findByLoginId" resultType="com.example.demo.entity.Employee">
+        SELECT * FROM employee WHERE login_id = #{loginId}
     </select>
 </mapper>

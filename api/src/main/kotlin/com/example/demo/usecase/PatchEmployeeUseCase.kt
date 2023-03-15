@@ -15,9 +15,10 @@ import com.example.demo.usecase.common.AbstractEmployeeUseCase
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface PatchEmployeeUseCase {
-    fun execute(id: Long, request: PatchEmployeeRequest)
+    fun execute(id: Long, request: PatchEmployeeRequest, loginId: String)
 }
 
 @Service
@@ -29,10 +30,11 @@ class PatchEmployeeUseCaseCaseImpl(
     private val employeeSkillMapper: EmployeeSkillMapper,
     private val s3Client: S3Client
 ) : PatchEmployeeUseCase, AbstractEmployeeUseCase(skillMapper, positionMapper) {
-    override fun execute(id: Long, request: PatchEmployeeRequest) {
+    override fun execute(id: Long, request: PatchEmployeeRequest, loginId: String) {
         employeeMapper.findById(id) ?: throw NotFoundException("employee not exists. id: $id.")
         super.validatePosition(request.positionId)
         super.validateSkill(request.skills)
+        val now = LocalDateTime.now()
 
         employeeMapper.update(
             Employee(
@@ -45,7 +47,13 @@ class PatchEmployeeUseCaseCaseImpl(
                 gender = GenderType.FEMALE, // Mapperでupdateしない
                 tel = request.tel,
                 positionId = request.positionId,
-                salaryOfMonth =  request.salaryOfMonth
+                salaryOfMonth = request.salaryOfMonth,
+                loginId = "",
+                password = "",
+                createdBy = loginId,
+                createdAt = now,
+                updatedBy = loginId,
+                updatedAt = now,
             )
         )
 
@@ -58,7 +66,9 @@ class PatchEmployeeUseCaseCaseImpl(
                     EmployeeSkill(
                         employeeSkillId = 0, // auto_increment
                         employeeId = id,
-                        skillId = it
+                        skillId = it,
+                        lastModifiedBy = loginId,
+                        lastModifiedAt = now,
                     )
                 }.toList()
             )

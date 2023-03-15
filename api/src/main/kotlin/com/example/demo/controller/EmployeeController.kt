@@ -1,6 +1,7 @@
 package com.example.demo.controller
 
 import com.example.demo.request.CreateEmployeeRequest
+import com.example.demo.request.PatchEmployeePasswordRequest
 import com.example.demo.request.PatchEmployeeRequest
 import com.example.demo.response.CreateEmployeeResponse
 import com.example.demo.response.GetEmployeeListResponse
@@ -11,6 +12,8 @@ import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.User
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -24,7 +27,8 @@ class EmployeeController(
     private val deleteEmployeeUseCase: DeleteEmployeeUseCase,
     private val getEmployeeListUseCase: GetEmployeeListUseCase,
     private val calcEmployeeSalaryUseCase: CalcEmployeeSalaryUseCase,
-    private val getEmployeeListCSVUseCase: GetEmployeeListCSVUseCase
+    private val getEmployeeListCSVUseCase: GetEmployeeListCSVUseCase,
+    private val patchEmployeePasswordUseCase: PatchEmployeePasswordUseCase,
 ) : AbstractController() {
 
     /**
@@ -32,8 +36,11 @@ class EmployeeController(
      */
     @PostMapping("/employee")
     @ResponseBody
-    fun create(@RequestBody @Validated request: CreateEmployeeRequest): CreateEmployeeResponse {
-        return createEmployeeUseCase.execute(request)
+    fun create(
+        @RequestBody @Validated request: CreateEmployeeRequest,
+        @AuthenticationPrincipal user: User
+    ): CreateEmployeeResponse {
+        return createEmployeeUseCase.execute(request, user.username)
     }
 
     /**
@@ -50,8 +57,24 @@ class EmployeeController(
      */
     @PatchMapping("/employee/{id}")
     @ResponseBody
-    fun patch(@PathVariable id: Long, @RequestBody @Validated request: PatchEmployeeRequest) {
-        patchEmployeeUseCase.execute(id, request)
+    fun patch(
+        @PathVariable id: Long,
+        @RequestBody @Validated request: PatchEmployeeRequest,
+        @AuthenticationPrincipal user: User
+    ) {
+        patchEmployeeUseCase.execute(id, request, user.username)
+    }
+
+    /**
+     * 社員パスワード更新
+     */
+    @PatchMapping("/employee/password")
+    @ResponseBody
+    fun patchPassword(
+        @RequestBody @Validated request: PatchEmployeePasswordRequest,
+        @AuthenticationPrincipal user: User
+    ) {
+        patchEmployeePasswordUseCase.execute(request, user.username)
     }
 
     /**
@@ -72,7 +95,7 @@ class EmployeeController(
         @RequestParam("name") name: String?,
         @RequestParam("kana") kana: String?,
         @RequestParam("gender") gender: GenderType?,
-        @RequestParam("position_id") positionId: Long?,
+        @RequestParam("position_id") positionId: Long?
     ): GetEmployeeListResponse {
         return getEmployeeListUseCase.execute(name, kana, gender, positionId)
     }
@@ -103,6 +126,6 @@ class EmployeeController(
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .headers(headers)
-            .body(getEmployeeListCSVUseCase.execute(name, kana, gender, positionId));
+            .body(getEmployeeListCSVUseCase.execute(name, kana, gender, positionId))
     }
 }

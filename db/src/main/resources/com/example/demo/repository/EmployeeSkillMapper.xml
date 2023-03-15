@@ -6,13 +6,17 @@
     <insert id="bulkInsert">
         INSERT INTO employee_skill (
           employee_id,
-          skill_id
+          skill_id,
+          last_modified_by,
+          last_modified_at
         )
         VALUES
         <foreach collection="entities" item="entity" separator=",">
         (
           #{entity.employeeId},
-          #{entity.skillId}
+          #{entity.skillId},
+          #{entity.lastModifiedBy},
+          #{entity.lastModifiedAt}
         )
         </foreach>
     </insert>

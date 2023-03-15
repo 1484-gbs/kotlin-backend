@@ -21,7 +21,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     data class ErrorResponse(
-        val message: String?,
+        val message: String? = null,
         val detail: String? = null,
         val cause: String? = null,
         val details: List<String>? = null,
@@ -46,7 +46,6 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             detail = e.message
         )
     }
-
 
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
@@ -73,6 +72,12 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return ErrorResponse(
             message = e.message
         )
+    }
+
+    @ExceptionHandler(UnAuthorizeException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun unauthorize(e: Exception): ErrorResponse {
+        return ErrorResponse()
     }
 
     @ExceptionHandler(Exception::class)

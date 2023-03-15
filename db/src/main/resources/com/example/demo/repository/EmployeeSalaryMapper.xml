@@ -13,7 +13,11 @@
           employment_insurance,
           welfare_pension,
           income_tax,
-          salary_paid
+          salary_paid,
+          created_by,
+          created_at,
+          updated_by,
+          updated_at
         )
         VALUES
         <foreach collection="entities" item="entity" separator=",">
@@ -26,7 +30,11 @@
           #{entity.employmentIncrease},
           #{entity.welfarePension},
           #{entity.incomeTax},
-          #{entity.salaryPaid}
+          #{entity.salaryPaid},
+          #{entity.createdBy},
+          #{entity.createdAt},
+          #{entity.updatedBy},
+          #{entity.updatedAt}
         )
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -34,6 +42,8 @@
           employment_insurance = VALUES(employment_insurance),
           welfare_pension = VALUES(welfare_pension),
           income_tax = VALUES(income_tax),
-          salary_paid = VALUES(salary_paid)
+          salary_paid = VALUES(salary_paid),
+          updated_by = VALUES(updated_by),
+          updated_at = VALUES(updated_at)
     </insert>
 </mapper>
