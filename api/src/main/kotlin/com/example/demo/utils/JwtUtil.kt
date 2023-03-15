@@ -11,13 +11,14 @@ class JwtUtil {
     companion object {
         private const val EXPIRED_HOUR = 4L
         private val ALGORITHM = Algorithm.HMAC256("gbservice")
+
         fun create(loginId: String): String {
-            val nowInstance = getInstant(0L)
+            val nowInstant = getInstant(0L)
             return JWT.create()
                 .withClaim(JwtClaimType.LOGIN_ID.value, loginId)
-                .withIssuedAt(nowInstance)
+                .withIssuedAt(nowInstant)
                 .withExpiresAt(getInstant(EXPIRED_HOUR))
-                .withNotBefore(nowInstance)
+                .withNotBefore(nowInstant)
                 .sign(ALGORITHM)
         }
 
