@@ -52,7 +52,7 @@
           last_name_kana = #{entity.lastNameKana},
           tel = #{entity.tel},
           position_id = #{entity.positionId},
-          salary_of_month = #{entity.salaryOfMonth},fix
+          salary_of_month = #{entity.salaryOfMonth},
           updated_by = #{entity.updatedBy},
           updated_at = #{entity.updatedAt}
         </set>
