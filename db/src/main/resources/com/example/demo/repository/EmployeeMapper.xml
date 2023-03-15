@@ -52,13 +52,7 @@
           last_name_kana = #{entity.lastNameKana},
           tel = #{entity.tel},
           position_id = #{entity.positionId},
-          salary_of_month = #{entity.salaryOfMonth},
-            <if test="entity.loginId != ''">
-                login_id = #{entity.loginId},
-            </if>
-            <if test="entity.password != ''">
-                password = #{entity.password},
-            </if>
+          salary_of_month = #{entity.salaryOfMonth},fix
           updated_by = #{entity.updatedBy},
           updated_at = #{entity.updatedAt}
         </set>
