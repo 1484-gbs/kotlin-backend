@@ -46,10 +46,10 @@ project(':api'){
     archivesBaseName = 'api'
 
     bootJar {
-        enabled = true //実行可能Jarを作成しない
+        enabled = true
     }
 
     jar {
-        enabled = true //Jarを作成する
+        enabled = true
     }
 }
