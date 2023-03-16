@@ -136,7 +136,7 @@ class EmployeeController(
      */
     @GetMapping("/employee/random")
     @ResponseBody
-    fun commonMrRandom(@RequestParam("count") count: Int): GetEmployeeRandomResponse {
-        return getEmployeeRandomUseCase.execute(count)
+    fun commonMrRandom(@RequestParam("count") count: Int?): GetEmployeeRandomResponse {
+        return getEmployeeRandomUseCase.execute(count ?: 1)
     }
 }
