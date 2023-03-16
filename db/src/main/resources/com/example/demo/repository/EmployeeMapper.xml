@@ -16,6 +16,7 @@
           salary_of_month,
           login_id,
           password,
+          token_id,
           created_by,
           created_at,
           updated_by,
@@ -33,6 +34,7 @@
           #{entity.salaryOfMonth},
           #{entity.loginId},
           #{entity.password},
+          #{entity.tokenId},
           #{entity.createdBy},
           #{entity.createdAt},
           #{entity.updatedBy},
@@ -61,14 +63,26 @@
     </update>
     <update id="updatePasswordByLoginId">
         UPDATE
-        employee
+            employee
         <set>
             password = #{password},
             updated_by = #{loginId},
+            token = null,
             updated_at = #{now}
         </set>
         WHERE
             login_id = #{loginId}
+    </update>
+    <update id="updateTokenById">
+        UPDATE
+            employee
+        <set>
+            token = #{token},
+            updated_by = #{loginId},
+            updated_at = #{now}
+        </set>
+        WHERE
+            employee_id = #{employeeId}
     </update>
     <delete id="delete">
         DELETE FROM
@@ -153,5 +167,8 @@
     </select>
     <select id="findByLoginId" resultType="com.example.demo.entity.Employee">
         SELECT * FROM employee WHERE login_id = #{loginId}
+    </select>
+    <select id="findByTokenId" resultType="com.example.demo.entity.Employee">
+        SELECT * FROM employee WHERE token_id = #{tokenId}
     </select>
 </mapper>

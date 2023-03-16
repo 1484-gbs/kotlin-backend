@@ -48,8 +48,10 @@ class PatchEmployeeUseCaseCaseImpl(
                 tel = request.tel,
                 positionId = request.positionId,
                 salaryOfMonth = request.salaryOfMonth,
-                loginId = "",
-                password = "",
+                loginId = "", // Mapperでupdateしない
+                password = "", // Mapperでupdateしない
+                tokenId = "", // Mapperでupdateしない
+                token = null, // Mapperでupdateしない
                 createdBy = loginId,
                 createdAt = now,
                 updatedBy = loginId,

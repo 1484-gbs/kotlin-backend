@@ -1,5 +1,6 @@
 package com.example.demo.usecase
 
+import com.example.demo.dto.UserDetailImpl
 import com.example.demo.repository.EmployeeMapper
 import com.example.demo.request.PatchEmployeePasswordRequest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -8,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 interface PatchEmployeePasswordUseCase {
-    fun execute(request: PatchEmployeePasswordRequest, loginId: String)
+    fun execute(request: PatchEmployeePasswordRequest, user: UserDetailImpl.UserDetail)
 }
 
 @Service
@@ -16,9 +17,9 @@ interface PatchEmployeePasswordUseCase {
 class PatchEmployeePasswordUseCaseImpl(
     private val employeeMapper: EmployeeMapper,
 ) : PatchEmployeePasswordUseCase {
-    override fun execute(request: PatchEmployeePasswordRequest, loginId: String) {
+    override fun execute(request: PatchEmployeePasswordRequest, user: UserDetailImpl.UserDetail) {
         employeeMapper.updatePasswordByLoginId(
-            loginId = loginId,
+            loginId = user.loginId,
             password = BCryptPasswordEncoder().encode(request.password),
             now = LocalDateTime.now()
         )

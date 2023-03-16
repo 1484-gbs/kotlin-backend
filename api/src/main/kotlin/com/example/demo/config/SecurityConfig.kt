@@ -1,6 +1,6 @@
 package com.example.demo.config
 
-import com.example.demo.filter.JwtTokenFilter
+import com.example.demo.filter.JwtFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -10,7 +10,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter) {
+class SecurityConfig(private val jwtFilter: JwtFilter) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -18,7 +18,7 @@ class SecurityConfig(private val jwtTokenFilter: JwtTokenFilter) {
             .csrf()
             .disable()
             .addFilterBefore(
-                jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java
+                jwtFilter, UsernamePasswordAuthenticationFilter::class.java
             )
         return http.build()
     }

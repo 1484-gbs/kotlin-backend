@@ -1,5 +1,6 @@
 package com.example.demo.controller
 
+import com.example.demo.dto.UserDetailImpl
 import com.example.demo.request.CreateEmployeeRequest
 import com.example.demo.request.PatchEmployeePasswordRequest
 import com.example.demo.request.PatchEmployeeRequest
@@ -13,7 +14,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.User
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -38,9 +38,9 @@ class EmployeeController(
     @ResponseBody
     fun create(
         @RequestBody @Validated request: CreateEmployeeRequest,
-        @AuthenticationPrincipal user: User
+        @AuthenticationPrincipal user: UserDetailImpl.UserDetail
     ): CreateEmployeeResponse {
-        return createEmployeeUseCase.execute(request, user.username)
+        return createEmployeeUseCase.execute(request, user.loginId)
     }
 
     /**
@@ -60,9 +60,9 @@ class EmployeeController(
     fun patch(
         @PathVariable id: Long,
         @RequestBody @Validated request: PatchEmployeeRequest,
-        @AuthenticationPrincipal user: User
+        @AuthenticationPrincipal user: UserDetailImpl.UserDetail
     ) {
-        patchEmployeeUseCase.execute(id, request, user.username)
+        patchEmployeeUseCase.execute(id, request, user.loginId)
     }
 
     /**
@@ -72,9 +72,9 @@ class EmployeeController(
     @ResponseBody
     fun patchPassword(
         @RequestBody @Validated request: PatchEmployeePasswordRequest,
-        @AuthenticationPrincipal user: User
+        @AuthenticationPrincipal user: UserDetailImpl.UserDetail
     ) {
-        patchEmployeePasswordUseCase.execute(request, user.username)
+        patchEmployeePasswordUseCase.execute(request, user)
     }
 
     /**

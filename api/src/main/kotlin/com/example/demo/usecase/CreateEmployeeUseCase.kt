@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.*
 
 interface CreateEmployeeUseCase {
     fun execute(request: CreateEmployeeRequest, loginId: String): CreateEmployeeResponse
@@ -50,6 +51,8 @@ class CreateEmployeeUseCaseCaseImpl(
             salaryOfMonth =  request.salaryOfMonth,
             loginId = request.loginId,
             password = BCryptPasswordEncoder().encode(request.password),
+            tokenId = UUID.randomUUID().toString(),
+            token = null,
             createdBy = loginId,
             createdAt = now,
             updatedBy = loginId,

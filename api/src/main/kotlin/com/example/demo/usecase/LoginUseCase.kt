@@ -8,13 +8,14 @@ import com.example.demo.utils.JwtUtil
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 interface LoginUseCase {
     fun execute(request: LoginRequest): LoginResponse
 }
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 class LoginUseCaseCaseImpl(
     private val employeeMapper: EmployeeMapper
 ) : LoginUseCase {
@@ -26,8 +27,17 @@ class LoginUseCaseCaseImpl(
             it
         } ?: throw InvalidRequestException("loginId or password is incorrect.")
 
+        val token = JwtUtil.create(employee.tokenId)
+
+        employeeMapper.updateTokenById(
+            employeeId = employee.employeeId,
+            token = token,
+            loginId = employee.loginId,
+            now = LocalDateTime.now(),
+        )
+
         return LoginResponse(
-            token = JwtUtil.create(employee.loginId)
+            token = token
         )
     }
 }

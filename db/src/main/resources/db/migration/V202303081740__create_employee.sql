@@ -1,5 +1,4 @@
 -- employee.`employee` definition
-
 CREATE TABLE `employee` (
   `employee_id` bigint NOT NULL AUTO_INCREMENT,
   `first_name` varchar(20) NOT NULL,
@@ -13,6 +12,8 @@ CREATE TABLE `employee` (
   `salary_of_month` INT NOT NULL,
   `login_id` VARCHAR(256) NOT NULL,
   `password` VARCHAR(256) NOT NULL,
+  `token_id` CHAR(36) NOT NULL,
+  `token` VARCHAR(500),
   `created_by` VARCHAR(256) NOT NULL,
   `created_at` datetime(3) NOT NULL,
   `updated_by` VARCHAR(256),

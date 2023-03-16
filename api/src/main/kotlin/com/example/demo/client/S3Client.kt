@@ -32,14 +32,14 @@ class S3ClientImpl(
 
     override fun upload(base64: String, folder: String, fileName: String) {
         val bi = Base64.decode(base64)
-        val metadata = ObjectMetadata()
-        metadata.contentLength = bi.size.toLong()
         ByteArrayInputStream(bi).use {
             val request = PutObjectRequest(
                 s3Config.bucket,
                 "$folder/$fileName",
                 it,
-                metadata
+                ObjectMetadata().apply {
+                    this.contentLength = bi.size.toLong()
+                }
             )
             createClient().putObject(request)
         }
@@ -65,9 +65,10 @@ class S3ClientImpl(
                 val generatePresignedUrlRequest = GeneratePresignedUrlRequest(
                     s3Config.bucket,
                     key,
-                )
-                generatePresignedUrlRequest.method = HttpMethod.GET
-                generatePresignedUrlRequest.expiration = Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant())
+                ).apply {
+                    this.method = HttpMethod.GET
+                    this.expiration = Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant())
+                }
                 s3Client.generatePresignedUrl(generatePresignedUrlRequest)?.toString()
             },
             onFailure = {

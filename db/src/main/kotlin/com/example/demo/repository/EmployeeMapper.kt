@@ -11,16 +11,28 @@ import java.time.LocalDateTime
 @Mapper
 interface EmployeeMapper {
     fun create(@Param("entity") entity: Employee)
+
     fun findById(@Param("employeeId") employeeId: Long): Employee?
+
     fun update(@Param("entity") entity: Employee)
+
     fun updatePasswordByLoginId(
         @Param("loginId") loginId: String,
         @Param("password") password: String,
         @Param("now") now: LocalDateTime
     )
 
+    fun updateTokenById(
+        @Param("employeeId") employeeId: Long,
+        @Param("token") token: String,
+        @Param("loginId") loginId: String,
+        @Param("now") now: LocalDateTime
+    )
+
     fun delete(@Param("employeeId") employeeId: Long)
+
     fun findEmployeeAndSkillById(@Param("employeeId") employeeId: Long): EmployeeAndSkill?
+
     fun findList(
         @Param("name") name: String?,
         @Param("kana") kana: String?,
@@ -29,5 +41,8 @@ interface EmployeeMapper {
     ): List<EmployeeList>
 
     fun findAll(): List<Employee>
+
     fun findByLoginId(@Param("loginId") loginId: String): Employee?
+
+    fun findByTokenId(@Param("tokenId") tokenId: String): Employee?
 }
