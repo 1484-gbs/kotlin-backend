@@ -27,9 +27,9 @@ class GetEmployeeRandomUseCaseCaseImpl(
        return GetEmployeeRandomResponse(
            employees = mutableListOf<GetEmployeeRandomResponse.GetEmployeeRandom>().apply {
                do {
-                   val coordinator = employee[(employee.indices).random()]
-                   this.firstOrNull { c -> c.employeeId == coordinator.employeeId }
-                       ?: this.add(GetEmployeeRandomResponse.GetEmployeeRandom.of(coordinator))
+                   val e = employee[(employee.indices).random()]
+                   this.firstOrNull { c -> c.employeeId == e.employeeId }
+                       ?: this.add(GetEmployeeRandomResponse.GetEmployeeRandom.of(e))
                } while (this.size != count)
            }
        )
