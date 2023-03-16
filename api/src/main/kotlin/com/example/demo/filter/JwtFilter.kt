@@ -17,7 +17,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtFilter(
-    private val employeeMapper: EmployeeMapper
+    private val employeeMapper: EmployeeMapper,
+    private val jwtUtil: JwtUtil
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -42,9 +43,9 @@ class JwtFilter(
                 }?.run { throw UnAuthorizeException() }
 
             val token = header.replace(BEARER, "")
-            val jwt = JwtUtil.verify(token)
+            val jwt = jwtUtil.verify(token)
 
-            val tokenId = JwtUtil.getClimeString(jwt, JwtUtil.JwtClaimType.TOKEN_ID)
+            val tokenId = jwtUtil.getClimeString(jwt, JwtUtil.JwtClaimType.TOKEN_ID)
                 .takeIf {
                     !it.isNullOrEmpty()
                 } ?: throw UnAuthorizeException()

@@ -10,7 +10,14 @@ app:
 
   aws:
     s3:
-      url: http://127.0.0.1:9000
+      url: ${AWS_S3_URL:http://127.0.0.1:9000}
       bucket: employee
-      access-key: minioadmin
-      secret-key: minioadmin
+      access-key: ${AWS_ACCESS_KEY_ID:minioadmin}
+      secret-key: ${AWS_SECRET_ACCESS_KEY_ID:minioadmin}
+
+  jwt:
+    expired-hour: ${JWT_EXPIRED_HOUR:4}
+    secret: ${JWT_SECRET:gbservice}
+    aud: ${JWT_AUD:https://gbservice.co.jp}
+    sub: ${JWT_sub:gbs}
+

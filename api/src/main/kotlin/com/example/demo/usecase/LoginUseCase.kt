@@ -17,7 +17,8 @@ interface LoginUseCase {
 @Service
 @Transactional
 class LoginUseCaseCaseImpl(
-    private val employeeMapper: EmployeeMapper
+    private val employeeMapper: EmployeeMapper,
+    private val jwtUtil: JwtUtil,
 ) : LoginUseCase {
     override fun execute(request: LoginRequest): LoginResponse {
         val employee = employeeMapper.findByLoginId(request.loginId)
@@ -27,7 +28,7 @@ class LoginUseCaseCaseImpl(
             it
         } ?: throw InvalidRequestException("loginId or password is incorrect.")
 
-        val token = JwtUtil.create(employee.tokenId)
+        val token = jwtUtil.create(employee.tokenId)
 
         employeeMapper.updateTokenById(
             employeeId = employee.employeeId,
