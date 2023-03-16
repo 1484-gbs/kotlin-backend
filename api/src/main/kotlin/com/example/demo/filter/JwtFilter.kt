@@ -69,7 +69,8 @@ class JwtFilter(
             },
             onFailure = { ex ->
                 when (ex) {
-                    is UnAuthorizeException, is JWTVerificationException -> response.status =
+                    is UnAuthorizeException,
+                    is JWTVerificationException -> response.status =
                         HttpStatus.UNAUTHORIZED.value()
 
                     else -> throw RuntimeException(ex)

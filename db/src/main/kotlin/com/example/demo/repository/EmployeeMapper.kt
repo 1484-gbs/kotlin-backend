@@ -16,7 +16,7 @@ interface EmployeeMapper {
 
     fun update(@Param("entity") entity: Employee)
 
-    fun updatePasswordByLoginId(
+    fun updatePasswordAndTokenNullByLoginId(
         @Param("loginId") loginId: String,
         @Param("password") password: String,
         @Param("now") now: LocalDateTime

@@ -61,13 +61,13 @@
         WHERE
           employee_id = #{entity.employeeId}
     </update>
-    <update id="updatePasswordByLoginId">
+    <update id="updatePasswordAndTokenNullByLoginId">
         UPDATE
             employee
         <set>
             password = #{password},
-            updated_by = #{loginId},
             token = null,
+            updated_by = #{loginId},
             updated_at = #{now}
         </set>
         WHERE

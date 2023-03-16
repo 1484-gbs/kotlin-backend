@@ -18,7 +18,7 @@ class PatchEmployeePasswordUseCaseImpl(
     private val employeeMapper: EmployeeMapper,
 ) : PatchEmployeePasswordUseCase {
     override fun execute(request: PatchEmployeePasswordRequest, user: UserDetailImpl.UserDetail) {
-        employeeMapper.updatePasswordByLoginId(
+        employeeMapper.updatePasswordAndTokenNullByLoginId(
             loginId = user.loginId,
             password = BCryptPasswordEncoder().encode(request.password),
             now = LocalDateTime.now()
