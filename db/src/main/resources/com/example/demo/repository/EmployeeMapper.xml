@@ -163,12 +163,17 @@
         ORDER BY p.display_order, e.employee_id
     </select>
     <select id="findAll" resultType="com.example.demo.entity.Employee">
-        SELECT * FROM employee
+        <include refid="selectAll"/>
     </select>
     <select id="findByLoginId" resultType="com.example.demo.entity.Employee">
-        SELECT * FROM employee WHERE login_id = #{loginId}
+        <include refid="selectAll"/>
+        <where>login_id = #{loginId}</where>
     </select>
     <select id="findByTokenId" resultType="com.example.demo.entity.Employee">
-        SELECT * FROM employee WHERE token_id = #{tokenId}
+        <include refid="selectAll"/>
+        <where>token_id = #{tokenId}</where>
     </select>
+    <sql id="selectAll">
+        SELECT * FROM employee
+    </sql>
 </mapper>
