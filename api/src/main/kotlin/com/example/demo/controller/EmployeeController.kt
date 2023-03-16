@@ -6,6 +6,7 @@ import com.example.demo.request.PatchEmployeePasswordRequest
 import com.example.demo.request.PatchEmployeeRequest
 import com.example.demo.response.CreateEmployeeResponse
 import com.example.demo.response.GetEmployeeListResponse
+import com.example.demo.response.GetEmployeeRandomResponse
 import com.example.demo.response.GetEmployeeResponse
 import com.example.demo.type.GenderType
 import com.example.demo.usecase.*
@@ -29,6 +30,7 @@ class EmployeeController(
     private val calcEmployeeSalaryUseCase: CalcEmployeeSalaryUseCase,
     private val getEmployeeListCSVUseCase: GetEmployeeListCSVUseCase,
     private val patchEmployeePasswordUseCase: PatchEmployeePasswordUseCase,
+    private val getEmployeeRandomUseCase: GetEmployeeRandomUseCase,
 ) : AbstractController() {
 
     /**
@@ -127,5 +129,14 @@ class EmployeeController(
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .headers(headers)
             .body(getEmployeeListCSVUseCase.execute(name, kana, gender, positionId))
+    }
+
+    /**
+     * らんだむくん　カモン
+     */
+    @GetMapping("/employee/random")
+    @ResponseBody
+    fun commonMrRandom(@RequestParam("count") count: Int): GetEmployeeRandomResponse {
+        return getEmployeeRandomUseCase.execute(count)
     }
 }
