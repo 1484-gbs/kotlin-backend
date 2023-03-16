@@ -2,6 +2,7 @@
 - Kotlin
 - SpringBoot
 - Mybatis
+- Flyway
 - RestTemplate
 - AWS S3 
 - SpringBatch
