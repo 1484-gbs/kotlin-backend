@@ -11,13 +11,16 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 @Component
 class JwtUtil(
     private val jwtConfig: JwtConfig
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
-    private val algorithm = Algorithm.HMAC256(jwtConfig.secret)
+    private val algorithm = Algorithm.HMAC256(
+        Base64.getEncoder().encode(jwtConfig.secret.toByteArray())
+    )
 
     fun create(tokenId: String): String {
         val nowInstant = getInstant(0L)
@@ -43,6 +46,7 @@ class JwtUtil(
                         log.warn("jwt is invalid.", ex)
                         throw UnAuthorizeException()
                     }
+
                     else -> throw RuntimeException(ex)
                 }
             }

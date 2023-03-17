@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import java.util.logging.Logger
 
 interface S3Client {
     fun upload(base64: String, folder: String, fileName: String)

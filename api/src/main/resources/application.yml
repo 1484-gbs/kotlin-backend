@@ -21,6 +21,26 @@ app:
     aud: ${JWT_AUD:https://gbservice.co.jp}
     sub: ${JWT_sub:gbs}
 
+  role:
+    deny-url:
+      admin:
+      manager:
+        -
+          method: POST
+          url: /employee/calc_salary
+        -
+          method: DELETE
+          url: /employee/.*"
+      general:
+        -
+          method: POST
+          url: /employee/calc_salary
+        -
+          method: POST
+          url: /employee
+        -
+          method: DELETE
+          url: /employee/.*"
 logging:
   level:
     com:
