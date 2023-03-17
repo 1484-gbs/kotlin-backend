@@ -54,7 +54,9 @@
           last_name_kana = #{entity.lastNameKana},
           tel = #{entity.tel},
           position_id = #{entity.positionId},
-          salary_of_month = #{entity.salaryOfMonth},
+          <if test="entity.salaryOfMonth > 0">
+            salary_of_month = #{entity.salaryOfMonth},
+          </if>
           updated_by = #{entity.updatedBy},
           updated_at = #{entity.updatedAt}
         </set>
@@ -102,7 +104,8 @@
           e.tel,
           e.position_id,
           es.skill_id,
-          e.salary_of_month
+          e.salary_of_month,
+          e.login_id
         FROM
           employee e
         LEFT JOIN
@@ -121,6 +124,7 @@
         <result column="tel" property="tel" />
         <result column="position_id" property="positionId" />
         <result column="salary_of_month" property="salaryOfMonth" />
+        <result column="login_id" property="loginId" />
         <collection property="skills" ofType="long">
             <result column="skill_id"/>
         </collection>
@@ -169,9 +173,11 @@
         <include refid="selectAll"/>
         <where>login_id = #{loginId}</where>
     </select>
-    <select id="findByTokenId" resultType="com.example.demo.entity.Employee">
-        <include refid="selectAll"/>
-        <where>token_id = #{tokenId}</where>
+    <select id="findByTokenId" resultType="com.example.demo.entity.EmployeeRole">
+        SELECT e.*, p.role FROM employee e
+        INNER JOIN position p
+        ON e.position_id = p.position_id
+        <where>e.token_id = #{tokenId}</where>
     </select>
     <sql id="selectAll">
         SELECT * FROM employee

@@ -1,7 +1,9 @@
 package com.example.demo.response
 
+import com.example.demo.dto.UserDetailImpl
 import com.example.demo.entity.EmployeeAndSkill
 import com.example.demo.type.DateFormatType
+import com.example.demo.type.RoleType
 import com.example.demo.utils.NumberUtil
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -27,10 +29,10 @@ data class GetEmployeeResponse(
     @JsonProperty("photo_url")
     val photoUrl: String?,
     @JsonProperty("salary_of_month")
-    val salaryOfMonth: Int
-    ) {
+    val salaryOfMonth: Int?
+) {
     companion object {
-        fun of(entity: EmployeeAndSkill, photoUrl: String?): GetEmployeeResponse {
+        fun of(entity: EmployeeAndSkill, photoUrl: String?, user: UserDetailImpl.UserDetail): GetEmployeeResponse {
             return GetEmployeeResponse(
                 firstName = entity.firstName,
                 lastName = entity.lastName,
@@ -43,7 +45,7 @@ data class GetEmployeeResponse(
                 positionId = entity.positionId,
                 skills = entity.skills,
                 photoUrl = photoUrl,
-                salaryOfMonth = entity.salaryOfMonth
+                salaryOfMonth = if (user.role == RoleType.ADMIN || user.loginId == entity.loginId) entity.salaryOfMonth else null
             )
         }
     }

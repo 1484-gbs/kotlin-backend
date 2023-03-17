@@ -1,8 +1,10 @@
 package com.example.demo.usecase
 
 import com.example.demo.client.S3Client
+import com.example.demo.dto.UserDetailImpl
 import com.example.demo.entity.Employee
 import com.example.demo.entity.EmployeeSkill
+import com.example.demo.exception.InvalidRequestException
 import com.example.demo.exception.NotFoundException
 import com.example.demo.repository.EmployeeMapper
 import com.example.demo.repository.EmployeeSkillMapper
@@ -10,6 +12,7 @@ import com.example.demo.repository.PositionMapper
 import com.example.demo.repository.SkillMapper
 import com.example.demo.request.PatchEmployeeRequest
 import com.example.demo.type.GenderType
+import com.example.demo.type.RoleType
 import com.example.demo.type.S3FileType
 import com.example.demo.usecase.common.AbstractEmployeeUseCase
 import org.springframework.stereotype.Service
@@ -18,7 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface PatchEmployeeUseCase {
-    fun execute(id: Long, request: PatchEmployeeRequest, loginId: String)
+    fun execute(id: Long, request: PatchEmployeeRequest, user: UserDetailImpl.UserDetail)
 }
 
 @Service
@@ -30,8 +33,15 @@ class PatchEmployeeUseCaseCaseImpl(
     private val employeeSkillMapper: EmployeeSkillMapper,
     private val s3Client: S3Client
 ) : PatchEmployeeUseCase, AbstractEmployeeUseCase(skillMapper, positionMapper) {
-    override fun execute(id: Long, request: PatchEmployeeRequest, loginId: String) {
-        employeeMapper.findById(id) ?: throw NotFoundException("employee not exists. id: $id.")
+    override fun execute(id: Long, request: PatchEmployeeRequest, user: UserDetailImpl.UserDetail) {
+        val employee = employeeMapper.findById(id)
+            ?: throw NotFoundException("employee not exists. id: $id.")
+
+        // ADMIN can update all user. other user can update just me.
+        (user.role == RoleType.ADMIN || user.loginId == employee.loginId)
+            .takeIf { it }
+            ?: throw InvalidRequestException("can't update other people's information.")
+
         super.validatePosition(request.positionId)
         super.validateSkill(request.skills)
         val now = LocalDateTime.now()
@@ -47,14 +57,18 @@ class PatchEmployeeUseCaseCaseImpl(
                 gender = GenderType.FEMALE, // Mapperでupdateしない
                 tel = request.tel,
                 positionId = request.positionId,
-                salaryOfMonth = request.salaryOfMonth,
+                salaryOfMonth = if (
+                    user.role == RoleType.ADMIN
+                    && request.salaryOfMonth != null
+                ) request.salaryOfMonth
+                else 0, // only ADMIN can update salary.
                 loginId = "", // Mapperでupdateしない
                 password = "", // Mapperでupdateしない
                 tokenId = "", // Mapperでupdateしない
                 token = null, // Mapperでupdateしない
-                createdBy = loginId,
+                createdBy = user.loginId,
                 createdAt = now,
-                updatedBy = loginId,
+                updatedBy = user.loginId,
                 updatedAt = now,
             )
         )
@@ -69,7 +83,7 @@ class PatchEmployeeUseCaseCaseImpl(
                         employeeSkillId = 0, // auto_increment
                         employeeId = id,
                         skillId = it,
-                        lastModifiedBy = loginId,
+                        lastModifiedBy = user.loginId,
                         lastModifiedAt = now,
                     )
                 }.toList()

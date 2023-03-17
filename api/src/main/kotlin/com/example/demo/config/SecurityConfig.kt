@@ -1,6 +1,7 @@
 package com.example.demo.config
 
 import com.example.demo.filter.JwtFilter
+import com.example.demo.filter.RoleFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -10,7 +11,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(private val jwtFilter: JwtFilter) {
+class SecurityConfig(
+    private val jwtFilter: JwtFilter,
+    private val roleFilter: RoleFilter) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -19,6 +22,9 @@ class SecurityConfig(private val jwtFilter: JwtFilter) {
             .disable()
             .addFilterBefore(
                 jwtFilter, UsernamePasswordAuthenticationFilter::class.java
+            )
+            .addFilterAfter(
+                roleFilter, JwtFilter::class.java
             )
         return http.build()
     }

@@ -59,7 +59,8 @@ class JwtFilter(
             val authentication = UsernamePasswordAuthenticationToken(
                 UserDetailImpl.UserDetail(
                     loginId = employee.loginId,
-                    token = token
+                    token = token,
+                    role = employee.role
                 ),
                 null
             )

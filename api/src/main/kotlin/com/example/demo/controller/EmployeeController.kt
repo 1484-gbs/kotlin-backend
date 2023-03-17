@@ -50,8 +50,8 @@ class EmployeeController(
      */
     @GetMapping("/employee/{id}")
     @ResponseBody
-    fun get(@PathVariable id: Long): GetEmployeeResponse {
-        return getEmployeeUseCase.execute(id)
+    fun get(@PathVariable id: Long, @AuthenticationPrincipal user: UserDetailImpl.UserDetail): GetEmployeeResponse {
+        return getEmployeeUseCase.execute(id, user)
     }
 
     /**
@@ -64,7 +64,7 @@ class EmployeeController(
         @RequestBody @Validated request: PatchEmployeeRequest,
         @AuthenticationPrincipal user: UserDetailImpl.UserDetail
     ) {
-        patchEmployeeUseCase.execute(id, request, user.loginId)
+        patchEmployeeUseCase.execute(id, request, user)
     }
 
     /**

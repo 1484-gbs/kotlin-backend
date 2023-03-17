@@ -32,5 +32,5 @@ data class PatchEmployeeRequest(
     val isDeletePhoto: Boolean? = false,
     @JsonProperty("salary_of_month")
     @field:SalaryOfMonth
-    val salaryOfMonth: Int,
+    val salaryOfMonth: Int?,
 )

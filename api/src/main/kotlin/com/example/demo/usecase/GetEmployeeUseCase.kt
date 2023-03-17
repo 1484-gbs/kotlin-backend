@@ -1,6 +1,7 @@
 package com.example.demo.usecase
 
 import com.example.demo.client.S3Client
+import com.example.demo.dto.UserDetailImpl
 import com.example.demo.exception.NotFoundException
 import com.example.demo.repository.EmployeeMapper
 import com.example.demo.response.GetEmployeeResponse
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface GetEmployeeUseCase {
-    fun execute(employeeId: Long): GetEmployeeResponse
+    fun execute(employeeId: Long, user: UserDetailImpl.UserDetail): GetEmployeeResponse
 }
 
 @Service
@@ -18,10 +19,10 @@ class GetEmployeeUseCaseCaseImpl(
     private val employeeMapper: EmployeeMapper,
     private val s3Client: S3Client,
 ) : GetEmployeeUseCase {
-    override fun execute(employeeId: Long): GetEmployeeResponse {
+    override fun execute(employeeId: Long, user: UserDetailImpl.UserDetail): GetEmployeeResponse {
         val employee = employeeMapper.findEmployeeAndSkillById(employeeId)
             ?: throw NotFoundException("employee not exists. id: $employeeId")
         val url = s3Client.getPresignedUrl(employee.employeeId.toString(), S3FileType.PHOTO.value)
-        return GetEmployeeResponse.of(employee, url)
+        return GetEmployeeResponse.of(employee, url, user)
     }
 }

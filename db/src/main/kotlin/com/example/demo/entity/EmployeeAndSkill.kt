@@ -16,5 +16,6 @@ class EmployeeAndSkill{
     var positionId: Long = 0
     var skills: List<Long> = mutableListOf()
     var salaryOfMonth: Int = 0
+    lateinit var loginId: String
 }
 

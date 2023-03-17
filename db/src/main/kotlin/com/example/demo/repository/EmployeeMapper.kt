@@ -3,6 +3,7 @@ package com.example.demo.repository
 import com.example.demo.entity.Employee
 import com.example.demo.entity.EmployeeAndSkill
 import com.example.demo.entity.EmployeeList
+import com.example.demo.entity.EmployeeRole
 import com.example.demo.type.GenderType
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
@@ -44,5 +45,5 @@ interface EmployeeMapper {
 
     fun findByLoginId(@Param("loginId") loginId: String): Employee?
 
-    fun findByTokenId(@Param("tokenId") tokenId: String): Employee?
+    fun findByTokenId(@Param("tokenId") tokenId: String): EmployeeRole?
 }
