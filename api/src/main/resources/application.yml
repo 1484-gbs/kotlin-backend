@@ -21,3 +21,9 @@ app:
     aud: ${JWT_AUD:https://gbservice.co.jp}
     sub: ${JWT_sub:gbs}
 
+logging:
+  level:
+    com:
+      example:
+        demo: DEBUG
+
