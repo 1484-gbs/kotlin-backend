@@ -8,6 +8,7 @@ import com.example.demo.utils.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -26,6 +27,8 @@ class JwtFilter(
         private val IGNORE_URL = listOf("/login", "/health")
     }
 
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -40,7 +43,10 @@ class JwtFilter(
             (header.isNullOrEmpty() || !header.startsWith(BEARER))
                 .takeIf {
                     it
-                }?.run { throw UnAuthorizeException() }
+                }?.run {
+                    log.warn("invalid authorization.")
+                    throw UnAuthorizeException()
+                }
 
             val token = header.replace(BEARER, "")
             val jwt = jwtUtil.verify(token)
@@ -48,13 +54,22 @@ class JwtFilter(
             val tokenId = jwtUtil.getClimeString(jwt, JwtUtil.JwtClaimType.TOKEN_ID)
                 .takeIf {
                     !it.isNullOrEmpty()
-                } ?: throw UnAuthorizeException()
+                } ?: run {
+                log.warn("token_id is null or empty.")
+                throw UnAuthorizeException()
+            }
 
             val employee = employeeMapper.findByTokenId(tokenId)?.let {
                 it.takeIf { e ->
                     e.token == token
-                } ?: throw UnAuthorizeException()
-            } ?: throw UnAuthorizeException()
+                } ?: run {
+                    log.warn("old token.")
+                    throw UnAuthorizeException()
+                }
+            } ?: run {
+                log.warn("employee not found.")
+                throw UnAuthorizeException()
+            }
 
             val authentication = UsernamePasswordAuthenticationToken(
                 UserDetailImpl.UserDetail(
@@ -66,10 +81,12 @@ class JwtFilter(
             )
             SecurityContextHolder.getContext().authentication = authentication
         }.fold(
-            onSuccess = {
+            onSuccess =
+            {
                 filterChain.doFilter(request, response)
             },
-            onFailure = { ex ->
+            onFailure =
+            { ex ->
                 when (ex) {
                     is UnAuthorizeException,
                     is JWTVerificationException -> response.status =

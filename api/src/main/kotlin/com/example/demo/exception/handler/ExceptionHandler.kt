@@ -4,6 +4,7 @@ import com.example.demo.exception.ApplicationException
 import com.example.demo.exception.InvalidRequestException
 import com.example.demo.exception.NotFoundException
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.slf4j.LoggerFactory
 import org.springframework.core.convert.ConversionFailedException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
 
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     data class ErrorResponse(
         val message: String? = null,
@@ -30,6 +33,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun notFoundException(e: Exception): ErrorResponse {
+        log.warn(e.message, e)
         return ErrorResponse(
             message = e.message,
         )
@@ -41,6 +45,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     )
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun badRequest(e: Exception): ErrorResponse {
+        log.warn(e.message, e)
         return ErrorResponse(
             message = "invalid request.",
             detail = e.message
@@ -53,7 +58,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-
+        log.warn(ex.message, ex)
         return ResponseEntity(
             ErrorResponse(
                 message = "invalid request.",
@@ -69,20 +74,16 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(ApplicationException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun applicationException(e: Exception): ErrorResponse {
+        log.error(e.message)
         return ErrorResponse(
             message = e.message
         )
     }
 
-    @ExceptionHandler(UnAuthorizeException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun unauthorize(e: Exception): ErrorResponse {
-        return ErrorResponse()
-    }
-
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun internalServerError(e: Exception): ErrorResponse {
+        log.error(e.message, e)
         return ErrorResponse(
             message = "system error.",
             detail = e.message,

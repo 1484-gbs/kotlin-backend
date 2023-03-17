@@ -6,6 +6,7 @@ import com.example.demo.type.RoleType
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
@@ -15,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class RoleFilter : OncePerRequestFilter() {
+
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     companion object {
         private val Deny_URL = mapOf(
@@ -51,10 +54,17 @@ class RoleFilter : OncePerRequestFilter() {
                                         && isDenyUrl(deny.url, request.requestURI)
                             }
                         ) {
+                            log.debug("deny url. ${request.method}/ ${request.requestURI} loginId:${user.loginId} role:${user.role} ")
                             throw UnAuthorizeException()
                         }
-                    } ?: throw UnAuthorizeException() // invalid role.
-                } ?: throw UnAuthorizeException()// invalid authentication.
+                    } ?: run {
+                        log.debug("invalid role.")
+                        throw UnAuthorizeException()
+                    }
+                } ?: run {
+                    log.debug("invalid authentication.")
+                    throw UnAuthorizeException()
+                }
             }
         }.fold(
             onSuccess = {

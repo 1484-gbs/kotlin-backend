@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.example.demo.config.JwtConfig
 import com.example.demo.exception.handler.UnAuthorizeException
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime
@@ -15,6 +16,7 @@ import java.time.ZoneId
 class JwtUtil(
     private val jwtConfig: JwtConfig
 ) {
+    private val log = LoggerFactory.getLogger(this::class.java)
     private val algorithm = Algorithm.HMAC256(jwtConfig.secret)
 
     fun create(tokenId: String): String {
@@ -37,7 +39,10 @@ class JwtUtil(
             onSuccess = { it },
             onFailure = { ex ->
                 when (ex) {
-                    is JWTVerificationException -> throw UnAuthorizeException()
+                    is JWTVerificationException -> {
+                        log.warn("jwt is invalid.", ex)
+                        throw UnAuthorizeException()
+                    }
                     else -> throw RuntimeException(ex)
                 }
             }
