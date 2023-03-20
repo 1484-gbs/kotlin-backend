@@ -59,6 +59,8 @@ class JwtFilter(
                 throw UnAuthorizeException()
             }
 
+            log.info("tokenId: $tokenId")
+
             val employee = employeeMapper.findByTokenId(tokenId)?.let {
                 it.takeIf { e ->
                     e.token == token

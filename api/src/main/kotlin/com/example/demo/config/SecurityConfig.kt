@@ -1,6 +1,7 @@
 package com.example.demo.config
 
 import com.example.demo.filter.JwtFilter
+import com.example.demo.filter.RequestResponseLoggingFilter
 import com.example.demo.filter.RoleFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfig(
     private val jwtFilter: JwtFilter,
-    private val roleFilter: RoleFilter) {
+    private val roleFilter: RoleFilter,
+    private val requestResponseLoggingFilter: RequestResponseLoggingFilter) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -22,6 +24,9 @@ class SecurityConfig(
             .disable()
             .addFilterBefore(
                 jwtFilter, UsernamePasswordAuthenticationFilter::class.java
+            )
+            .addFilterBefore(
+                requestResponseLoggingFilter, JwtFilter::class.java
             )
             .addFilterAfter(
                 roleFilter, JwtFilter::class.java
