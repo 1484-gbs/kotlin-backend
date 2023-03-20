@@ -14,7 +14,8 @@ import java.nio.charset.StandardCharsets
 class RequestResponseLoggingFilter : OncePerRequestFilter() {
 
     private val log = LoggerFactory.getLogger(this::class.java)
-    companion object{
+
+    companion object {
         private val IGNORE_LOGGING = listOf("password")
     }
 
@@ -46,8 +47,8 @@ class RequestResponseLoggingFilter : OncePerRequestFilter() {
             it.isNotBlank()
         }?.let {
             var body: String = it
-            for (field in IGNORE_LOGGING){
-                body = body.replace(Regex("\"$field\":.*"), "\"$field\": -- not logging --")
+            for (field in IGNORE_LOGGING) {
+                body = removeIgnoreField(body, field)
             }
             log.info("RequestBody: $body")
         }
@@ -69,4 +70,22 @@ class RequestResponseLoggingFilter : OncePerRequestFilter() {
         }
     }
 
+    private fun removeIgnoreField(body: String, field: String): String {
+        val matchesString = "\"$field\":.*"
+        val replaceString = "\"$field\": -- not logging --"
+        return body.contains(Regex("$matchesString,"))
+            .takeIf { bool -> bool }
+            ?.run {
+                body.replace(Regex("$matchesString,"), "$replaceString,")
+            } ?: run {
+            body.contains(Regex(matchesString))
+                .takeIf { bool -> bool }
+                ?.run {
+                    body.replace(Regex(matchesString), replaceString)
+                }
+                ?: run {
+                    body
+                }
+        }
+    }
 }
