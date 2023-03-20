@@ -14,6 +14,10 @@ import java.nio.charset.StandardCharsets
 class RequestResponseLoggingFilter : OncePerRequestFilter() {
 
     private val log = LoggerFactory.getLogger(this::class.java)
+    companion object{
+        private val IGNORE_LOGGING = listOf("password", "login_id")
+    }
+
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -41,7 +45,11 @@ class RequestResponseLoggingFilter : OncePerRequestFilter() {
         String(requestWrapper.inputStream.readBytes(), StandardCharsets.UTF_8).takeIf {
             it.isNotBlank()
         }?.let {
-            log.info("RequestBody: $it")
+            var body: String = it
+            for (field in IGNORE_LOGGING){
+                body = body.replace(Regex("\"$field\":.*"), "\"$field\": -- not logging --")
+            }
+            log.info("RequestBody: $body")
         }
 
         runCatching {

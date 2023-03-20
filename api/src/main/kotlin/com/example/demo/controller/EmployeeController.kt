@@ -70,13 +70,14 @@ class EmployeeController(
     /**
      * 社員パスワード更新
      */
-    @PatchMapping("/employee/password")
+    @PatchMapping("/employee/{id}/password")
     @ResponseBody
     fun patchPassword(
+        @PathVariable id: Long,
         @RequestBody @Validated request: PatchEmployeePasswordRequest,
         @AuthenticationPrincipal user: UserDetailImpl.UserDetail
     ) {
-        patchEmployeePasswordUseCase.execute(request, user)
+        patchEmployeePasswordUseCase.execute(id, request, user)
     }
 
     /**
