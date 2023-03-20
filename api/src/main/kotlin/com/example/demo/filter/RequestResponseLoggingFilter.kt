@@ -15,7 +15,7 @@ class RequestResponseLoggingFilter : OncePerRequestFilter() {
 
     private val log = LoggerFactory.getLogger(this::class.java)
     companion object{
-        private val IGNORE_LOGGING = listOf("password", "login_id")
+        private val IGNORE_LOGGING = listOf("password")
     }
 
 
