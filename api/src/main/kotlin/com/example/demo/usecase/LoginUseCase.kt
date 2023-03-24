@@ -24,8 +24,8 @@ class LoginUseCaseCaseImpl(
         val employee = employeeMapper.findByLoginId(request.loginId)
             ?: throw InvalidRequestException("loginId or password is incorrect.")
 
-        BCryptPasswordEncoder().matches(request.password, employee.password).takeIf {
-            it
+        request.password.takeIf {
+            BCryptPasswordEncoder().matches(it, employee.password)
         } ?: throw InvalidRequestException("loginId or password is incorrect.")
 
         val token = jwtUtil.create(employee.tokenId)

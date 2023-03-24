@@ -14,7 +14,7 @@ class CustomHeaderColumnNameMappingStrategyBuilder {
                     // FieldをCsvBindByPosition.position順で並び替え
                     .sortedWith(
                         compareBy {
-                            it.getAnnotation(CsvBindByPosition::class.java)?.position
+                            it.getAnnotation(CsvBindByPosition::class.java)?.position ?: Int.MAX_VALUE
                         }
                     )
                     .mapNotNull {

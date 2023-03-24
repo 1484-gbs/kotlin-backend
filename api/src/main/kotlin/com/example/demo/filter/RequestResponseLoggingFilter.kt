@@ -71,15 +71,17 @@ class RequestResponseLoggingFilter : OncePerRequestFilter() {
     }
 
     private fun removeIgnoreField(body: String, field: String): String {
-        val matchesString = "\"$field\":.*"
+        val matchesString = Regex("\"$field\":.*")
         val replaceString = "\"$field\": -- not logging --"
+        val matchesStringWithComma = Regex("$matchesString,")
+        val replaceStringWithComma = "$replaceString,"
         return body.takeIf {
-            it.contains(Regex("$matchesString,"))
-        }?.replace(Regex("$matchesString,"), "$replaceString,")
+            it.contains(matchesStringWithComma)
+        }?.replace(matchesStringWithComma, replaceStringWithComma)
             ?: run {
                 body.takeIf {
-                    it.contains(Regex(matchesString))
-                }?.replace(Regex(matchesString), replaceString)
+                    it.contains(matchesString)
+                }?.replace(matchesString, replaceString)
                     ?: run {
                         body
                     }
