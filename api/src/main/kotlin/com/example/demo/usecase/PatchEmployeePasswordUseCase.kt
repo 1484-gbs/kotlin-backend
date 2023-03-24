@@ -24,9 +24,9 @@ class PatchEmployeePasswordUseCaseImpl(
         val employee = employeeMapper.findById(id)
             ?: throw NotFoundException("employee not exists. id: $id")
 
-        (user.role == RoleType.ADMIN || employee.loginId == user.loginId)
-            .takeIf { it }
-            ?: throw InvalidRequestException("can't update other people's password.")
+        user.takeIf {
+            it.role == RoleType.ADMIN || it.loginId == employee.loginId
+        } ?: throw InvalidRequestException("can't update other people's information.")
 
         employeeMapper.updatePasswordAndTokenNullById(
             employeeId = id,

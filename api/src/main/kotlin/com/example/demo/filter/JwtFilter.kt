@@ -39,16 +39,15 @@ class JwtFilter(
                 return@runCatching
             }
 
-            val header = request.getHeader(HttpHeaders.AUTHORIZATION)
-            (header.isNullOrEmpty() || !header.startsWith(BEARER))
-                .takeIf {
-                    it
-                }?.run {
+            val token = request.getHeader(HttpHeaders.AUTHORIZATION)
+                ?.takeIf {
+                    it.isNotEmpty() && it.startsWith(BEARER)
+                }?.replace(BEARER, "")
+                ?: run {
                     log.warn("invalid authorization.")
                     throw UnAuthorizeException()
                 }
 
-            val token = header.replace(BEARER, "")
             val jwt = jwtUtil.verify(token)
 
             val tokenId = jwtUtil.getClimeString(jwt, JwtUtil.JwtClaimType.TOKEN_ID)

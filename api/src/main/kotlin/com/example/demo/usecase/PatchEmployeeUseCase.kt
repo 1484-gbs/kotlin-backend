@@ -38,9 +38,9 @@ class PatchEmployeeUseCaseCaseImpl(
             ?: throw NotFoundException("employee not exists. id: $id.")
 
         // ADMIN can update all user. other user can update just me.
-        (user.role == RoleType.ADMIN || user.loginId == employee.loginId)
-            .takeIf { it }
-            ?: throw InvalidRequestException("can't update other people's information.")
+        user.takeIf {
+            it.role == RoleType.ADMIN || it.loginId == employee.loginId
+        } ?: throw InvalidRequestException("can't update other people's information.")
 
         super.validatePosition(request.positionId)
         super.validateSkill(request.skills)
@@ -91,7 +91,7 @@ class PatchEmployeeUseCaseCaseImpl(
         }
 
         request.photo?.let {
-            s3Client.upload(request.photo, id.toString(), S3FileType.PHOTO.value)
+            s3Client.upload(it, id.toString(), S3FileType.PHOTO.value)
         } ?: run {
             request.isDeletePhoto.takeIf {
                 it == true

@@ -28,25 +28,18 @@ class RoleFilter(
     ) {
         runCatching {
             SecurityContextHolder.getContext().authentication?.let { sca ->
-                val user = sca.principal as UserDetailImpl.UserDetail?
-                user?.let { u ->
-                    val denyUrl = when (u.role) {
-                        RoleType.ADMIN -> roleConfig.denyUrl.admin
-                        RoleType.MANAGER -> roleConfig.denyUrl.manager
-                        RoleType.GENERAL -> roleConfig.denyUrl.general
+                val user = sca.principal as UserDetailImpl.UserDetail
+                when (user.role) {
+                    RoleType.ADMIN -> roleConfig.denyUrl.admin
+                    RoleType.MANAGER -> roleConfig.denyUrl.manager
+                    RoleType.GENERAL -> roleConfig.denyUrl.general
+                }.takeIf {
+                    it.any { denyUrl ->
+                        denyUrl.method == request.method
+                                && isDenyUrl(denyUrl.url, request.requestURI)
                     }
-
-                    if (denyUrl.any { deny ->
-                            deny.method == request.method
-                                    && isDenyUrl(deny.url, request.requestURI)
-                        }
-                    ) {
-                        log.debug("deny url. ${request.method} ${request.requestURI} loginId:${user.loginId} role:${user.role} ")
-                        throw UnAuthorizeException()
-                    }
-
-                } ?: run {
-                    log.debug("invalid authentication.")
+                }?.run {
+                    log.debug("deny url. ${request.method} ${request.requestURI} loginId:${user.loginId} role:${user.role} ")
                     throw UnAuthorizeException()
                 }
             }
