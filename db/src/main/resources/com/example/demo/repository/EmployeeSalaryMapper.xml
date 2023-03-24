@@ -38,6 +38,7 @@
         )
         </foreach>
         ON DUPLICATE KEY UPDATE
+          salary_of_month = VALUES(salary_of_month),
           health_insurance = VALUES(health_insurance),
           employment_insurance = VALUES(employment_insurance),
           welfare_pension = VALUES(welfare_pension),

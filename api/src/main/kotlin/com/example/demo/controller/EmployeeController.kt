@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 @RestController
@@ -108,8 +109,11 @@ class EmployeeController(
      */
     @PostMapping("/employee/calc_salary")
     @ResponseBody
-    fun calcEmployeeSalary() {
-        calcEmployeeSalaryUseCase.execute()
+    fun calcEmployeeSalary(
+        @RequestParam("year_month") yearMonth: YearMonth?,
+        @AuthenticationPrincipal user: UserDetailImpl.UserDetail
+    ) {
+        calcEmployeeSalaryUseCase.execute(yearMonth, user)
     }
 
     /**

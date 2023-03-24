@@ -11,10 +11,12 @@ import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDateTime
+import java.time.YearMonth
 
 @Component
 @StepScope
@@ -25,9 +27,16 @@ class CalcSalaryOfMonthTasklet(
     private val rateConfig: RateConfig
 ) : Tasklet {
 
+    @Value("#{jobParameters[loginId]}")
+    lateinit var loginId: String
+
+    @Value("#{jobParameters[targetYearMonth]}")
+    var yearMonth: YearMonth? = null
+
     companion object {
         val HALF: BigDecimal = BigDecimal.valueOf(0.5)
     }
+
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
 
         runCatching {
@@ -35,6 +44,12 @@ class CalcSalaryOfMonthTasklet(
             val increases = increaseMapper.findAll()
             val rateEmploymentIncrease = BigDecimal(rateConfig.employmentIncrease)
             val rateWelfareIncrease = BigDecimal(rateConfig.welfareIncrease)
+            val now = LocalDateTime.now()
+            val yearMonth = yearMonth.takeIf {
+                it != null
+            }?: run {
+                YearMonth.now()
+            }
 
             val employeeSalaries = employees.asSequence().map { e ->
                 val salaryOfMonth = BigDecimal.valueOf(e.salaryOfMonth.toLong())
@@ -64,22 +79,20 @@ class CalcSalaryOfMonthTasklet(
                     .subtract(healthInsurance)
                     .subtract(welfarePension)
 
-                val now = LocalDateTime.now()
-
                 EmployeeSalary(
                     employeeSalaryId = 0,
                     employeeId = e.employeeId,
-                    year = now.year,
-                    month = now.monthValue,
+                    year = yearMonth.year,
+                    month = yearMonth.monthValue,
                     salaryOfMonth = e.salaryOfMonth,
                     healthInsurance = healthInsurance.toInt(),
                     welfarePension = welfarePension.toInt(),
                     employmentIncrease = employmentIncrease.toInt(),
                     incomeTax = 0, // TODO
                     salaryPaid = salaryPaid.toInt(),
-                    createdBy = "loginId",
+                    createdBy = loginId,
                     createdAt = now,
-                    updatedBy = "loginId",
+                    updatedBy = loginId,
                     updatedAt = now,
                 )
             }.toList()
