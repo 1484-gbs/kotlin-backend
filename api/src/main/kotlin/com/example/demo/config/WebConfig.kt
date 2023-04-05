@@ -16,8 +16,8 @@ class WebConfig : WebMvcConfigurer {
                 HttpMethod.POST.toString(),
                 HttpMethod.PUT.toString(),
                 HttpMethod.DELETE.toString(),
-                HttpMethod.PATCH.toString()
+                HttpMethod.PATCH.toString(),
             )
-            .allowedHeaders("Authorization")
+            .allowedHeaders("Authorization", "Access-Control-Allow-Origin")
     }
 }
