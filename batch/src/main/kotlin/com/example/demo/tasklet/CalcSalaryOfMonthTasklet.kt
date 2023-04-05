@@ -47,7 +47,7 @@ class CalcSalaryOfMonthTasklet(
             val now = LocalDateTime.now()
             val yearMonth = yearMonth.takeIf {
                 it != null
-            }?: run {
+            } ?: run {
                 YearMonth.now()
             }
 

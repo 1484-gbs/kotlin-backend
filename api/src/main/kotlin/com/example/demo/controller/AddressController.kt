@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AddressController(
-        private val getAddressUseCase: GetAddressUseCase
-): AbstractController() {
+    private val getAddressUseCase: GetAddressUseCase
+) : AbstractController() {
 
     /**
      * 住所検索

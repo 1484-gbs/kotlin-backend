@@ -4,7 +4,7 @@ import com.example.demo.type.GenderType
 import java.time.LocalDate
 
 // mybatisでcollection使用時、data class`だとエラーになる
-class EmployeeAndSkill{
+class EmployeeAndSkill {
     var employeeId: Long = 0
     lateinit var firstName: String
     lateinit var lastName: String

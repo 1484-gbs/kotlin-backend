@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PositionController(
-        private val getPositionUseCase: GetPositionUseCase
-): AbstractController() {
+    private val getPositionUseCase: GetPositionUseCase
+) : AbstractController() {
 
     /**
      * 役職マスタ一覧取得

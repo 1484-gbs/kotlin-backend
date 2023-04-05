@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class RoleConfig {
     lateinit var denyUrl: DenyUrls
 
-    data class DenyUrls (
+    data class DenyUrls(
         val admin: List<DenyUrl>,
         val manager: List<DenyUrl>,
         val general: List<DenyUrl>,

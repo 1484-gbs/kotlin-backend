@@ -8,7 +8,7 @@ import java.io.InputStream
 /**
  * @see https://www.baeldung.com/spring-http-logging
  */
-class CachedServletInputStream(cachedBody: ByteArray): ServletInputStream() {
+class CachedServletInputStream(cachedBody: ByteArray) : ServletInputStream() {
 
     private var cachedInputStream: InputStream? = null
 

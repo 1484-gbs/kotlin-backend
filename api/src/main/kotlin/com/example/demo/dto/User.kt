@@ -4,13 +4,14 @@ import com.example.demo.type.RoleType
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetailImpl(val userDetail: UserDetail): UserDetails {
+class UserDetailImpl: UserDetails {
 
     data class UserDetail(
         val loginId: String,
         val token: String,
         val role: RoleType
     )
+
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         TODO("Not yet implemented")
     }

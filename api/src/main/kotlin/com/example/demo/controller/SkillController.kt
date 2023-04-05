@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SkillController(
-        private val getSkillPerTypeUseCase: GetSkillPerTypeUseCase
-): AbstractController() {
+    private val getSkillPerTypeUseCase: GetSkillPerTypeUseCase
+) : AbstractController() {
 
     /**
      * スキルマスタ一覧取得

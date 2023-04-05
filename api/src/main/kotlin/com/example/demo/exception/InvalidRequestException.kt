@@ -1,3 +1,3 @@
 package com.example.demo.exception
 
-class InvalidRequestException(message: String): RuntimeException(message) {}
+class InvalidRequestException(message: String) : RuntimeException(message) {}

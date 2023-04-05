@@ -19,8 +19,9 @@ abstract class AbstractEmployeeUseCase(
             }
         }
     }
+
     fun validatePosition(positionId: Long) {
-        positionMapper.findAll().firstOrNull{ it.positionId == positionId }
+        positionMapper.findAll().firstOrNull { it.positionId == positionId }
             ?: throw InvalidRequestException("invalid position_id: $positionId.")
     }
 }

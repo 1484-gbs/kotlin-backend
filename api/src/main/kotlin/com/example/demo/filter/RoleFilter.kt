@@ -36,7 +36,7 @@ class RoleFilter(
                 }.takeIf {
                     it.any { denyUrl ->
                         denyUrl.method == request.method
-                                && isDenyUrl(denyUrl.url, request.requestURI)
+                            && isDenyUrl(denyUrl.url, request.requestURI)
                     }
                 }?.run {
                     log.debug("deny url. ${request.method} ${request.requestURI} loginId:${user.loginId} role:${user.role} ")

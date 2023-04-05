@@ -43,7 +43,7 @@ tasks.withType(KotlinCompile) {
 tasks.named('test') {
     useJUnitPlatform()
 }
-project(':api'){
+project(':api') {
     archivesBaseName = 'api'
 
     bootJar {

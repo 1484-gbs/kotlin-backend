@@ -8,7 +8,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-class RestConfig{
+class RestConfig {
     @Bean
     fun restTemplate(builder: RestTemplateBuilder): RestTemplate {
         val messageConverter = MappingJackson2HttpMessageConverter()

@@ -25,21 +25,16 @@ app:
     deny-url:
       admin:
       manager:
-        -
-          method: POST
+        - method: POST
           url: /employee/calc_salary
-        -
-          method: DELETE
+        - method: DELETE
           url: /employee/.*"
       general:
-        -
-          method: POST
+        - method: POST
           url: /employee/calc_salary
-        -
-          method: POST
+        - method: POST
           url: /employee
-        -
-          method: DELETE
+        - method: DELETE
           url: /employee/.*"
 logging:
   level:

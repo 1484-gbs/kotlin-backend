@@ -21,7 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager
 @Configuration
 class DemoJob(
     private val txManager: PlatformTransactionManager,
-)  {
+) {
 
     @Bean
     fun jobDemo(jobRepository: JobRepository, @Qualifier("stepDemo") step: Step): Job {
@@ -37,7 +37,7 @@ class DemoJob(
     }
 
     @Component
-    class DemoTasklet: Tasklet {
+    class DemoTasklet : Tasklet {
         override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
             println("hello.")
             return RepeatStatus.FINISHED

@@ -48,7 +48,7 @@ class CreateEmployeeUseCaseCaseImpl(
             gender = request.gender,
             tel = request.tel,
             positionId = request.positionId,
-            salaryOfMonth =  request.salaryOfMonth,
+            salaryOfMonth = request.salaryOfMonth,
             loginId = request.loginId,
             password = BCryptPasswordEncoder().encode(request.password),
             tokenId = UUID.randomUUID().toString(),

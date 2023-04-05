@@ -24,14 +24,14 @@ class GetEmployeeRandomUseCaseCaseImpl(
                 throw InvalidRequestException("count:$count is invalid. target employee count: ${it.size}")
         }
 
-       return GetEmployeeRandomResponse(
-           employees = mutableListOf<GetEmployeeRandomResponse.GetEmployeeRandom>().apply {
-               do {
-                   val randomEmployee = employee[(employee.indices).random()]
-                   this.firstOrNull { e -> e.employeeId == randomEmployee.employeeId }
-                       ?: this.add(GetEmployeeRandomResponse.GetEmployeeRandom.of(randomEmployee))
-               } while (this.size != count)
-           }
-       )
+        return GetEmployeeRandomResponse(
+            employees = mutableListOf<GetEmployeeRandomResponse.GetEmployeeRandom>().apply {
+                do {
+                    val randomEmployee = employee[(employee.indices).random()]
+                    this.firstOrNull { e -> e.employeeId == randomEmployee.employeeId }
+                        ?: this.add(GetEmployeeRandomResponse.GetEmployeeRandom.of(randomEmployee))
+                } while (this.size != count)
+            }
+        )
     }
 }

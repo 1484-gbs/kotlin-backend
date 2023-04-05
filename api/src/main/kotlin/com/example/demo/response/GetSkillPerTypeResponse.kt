@@ -16,10 +16,10 @@ data class GetSkillPerTypeResponse(
             @JsonProperty("id")
             val skillId: Long,
             @JsonProperty("name")
-            val skillName: String   
+            val skillName: String
         ) {
             companion object {
-                fun of (entity: Skill): SkillResponse {
+                fun of(entity: Skill): SkillResponse {
                     return SkillResponse(
                         skillId = entity.skillId,
                         skillName = entity.skillName
