@@ -135,30 +135,44 @@ class CalcSalaryOfMonthTasklet(
                 it
             }
         }
-
-        val filePath = "${tmpDir}employeeSalaries_${yearMonth}_${
-            // TODO 同じ名前のファイル名がSFTPサーバー上に存在する場合にエラーとなるのでタイムスタンプ付与
-            DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now())
-        }.csv"
+        val fileName = "employeeSalaries_${yearMonth}.csv"
+        val tmpFilePath = "${tmpDir}${fileName}"
 
         runCatching {
-            FileWriter(filePath).use { writer ->
+            FileWriter(tmpFilePath).use { writer ->
                 val beanToCsv = StatefulBeanToCsvBuilder<EmployeeSalaryCSV>(writer).build()
                 beanToCsv.write(csv)
             }
 
-            val file = Paths.get(filePath).toFile()
+            val tmpFile = Paths.get(tmpFilePath).toFile()
 
             val sftpClient = SftpClientBuilder.build(sftpConfig)
             sftpClient.setRemoteDirectoryExpression(LiteralExpression(sftpConfig.subdir))
+
+            val sftpFilePath = "${sftpConfig.subdir}${sftpClient.remoteFileSeparator}${fileName}"
+            var sftpOldFilePath = ""
+            if (sftpClient.exists(sftpFilePath)) {
+                sftpOldFilePath = "${sftpFilePath}_old_${
+                    DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now())
+                }"
+                // 既存ファイルrename
+                sftpClient.rename(sftpFilePath,sftpOldFilePath)
+            }
+
+            // ファイル送信
             sftpClient.send(
-                MessageBuilder.withPayload(file).build()
+                MessageBuilder.withPayload(tmpFile).build()
             )
 
-            file.delete()
+            // 送信完了したらoldファイル削除
+            if (sftpOldFilePath.isNotEmpty()){
+                sftpClient.remove(sftpOldFilePath)
+            }
+
+            tmpFile.delete()
 
         }.onFailure {
-            Paths.get(filePath).toFile().delete()
+            Paths.get(tmpFilePath).toFile().delete()
             throw it
         }
     }
