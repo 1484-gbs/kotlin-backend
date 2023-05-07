@@ -19,9 +19,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.0'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.batch:spring-batch-test'
+    implementation 'com.opencsv:opencsv:5.7.1'
+    implementation "org.springframework.integration:spring-integration-sftp:6.0.5"
     implementation(project(':db'))
 }
 

@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Param
 interface EmployeeSkillMapper {
     fun bulkInsert(@Param("entities") entities: List<EmployeeSkill>)
     fun deleteByEmployeeId(@Param("employeeId") employeeId: Long)
+    fun deleteByEmployeeIdAndSkillIds(@Param("employeeId") employeeId: Long, @Param("skillIds") skillIds: List<Long>)
 }

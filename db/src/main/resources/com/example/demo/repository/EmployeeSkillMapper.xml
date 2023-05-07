@@ -26,4 +26,15 @@
         WHERE
           employee_id = #{employeeId}
     </delete>
+    <delete id="deleteByEmployeeIdAndSkillIds">
+        DELETE FROM
+          employee_skill
+        WHERE
+          employee_id = #{employeeId}
+        AND
+          skill_id IN
+          <foreach collection="skillIds" item="skillId" open="(" separator="," close=")">
+            #{skillId}
+          </foreach>
+    </delete>
 </mapper>

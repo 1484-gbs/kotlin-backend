@@ -1,22 +1,33 @@
 package com.example.demo.tasklet
 
+import com.example.demo.client.SftpClientBuilder
 import com.example.demo.config.RateConfig
+import com.example.demo.config.SftpConfig
+import com.example.demo.dto.EmployeeSalaryCSV
 import com.example.demo.entity.EmployeeSalary
 import com.example.demo.repository.EmployeeMapper
 import com.example.demo.repository.EmployeeSalaryMapper
 import com.example.demo.repository.IncreaseMapper
 import com.example.demo.type.IncreaseType
+import com.opencsv.bean.StatefulBeanToCsvBuilder
+import org.slf4j.LoggerFactory
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.expression.common.LiteralExpression
+import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Component
+import java.io.FileWriter
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+
 
 @Component
 @StepScope
@@ -24,7 +35,8 @@ class CalcSalaryOfMonthTasklet(
     private val employeeMapper: EmployeeMapper,
     private val employeeSalaryMapper: EmployeeSalaryMapper,
     private val increaseMapper: IncreaseMapper,
-    private val rateConfig: RateConfig
+    private val rateConfig: RateConfig,
+    private val sftpConfig: SftpConfig,
 ) : Tasklet {
 
     @Value("#{jobParameters[loginId]}")
@@ -36,6 +48,8 @@ class CalcSalaryOfMonthTasklet(
     companion object {
         val HALF: BigDecimal = BigDecimal.valueOf(0.5)
     }
+
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
 
@@ -50,7 +64,6 @@ class CalcSalaryOfMonthTasklet(
             } ?: run {
                 YearMonth.now()
             }
-
             val employeeSalaries = employees.asSequence().map { e ->
                 val salaryOfMonth = BigDecimal.valueOf(e.salaryOfMonth.toLong())
                 // 雇用保険額
@@ -98,14 +111,55 @@ class CalcSalaryOfMonthTasklet(
             }.toList()
 
             employeeSalaryMapper.upsert(employeeSalaries)
-
+            // sftp送信
+            sendToSftp(employeeSalaries, yearMonth)
         }.fold(
             onSuccess = {
                 return RepeatStatus.FINISHED
             },
             onFailure = {
+                log.debug("error.", it)
                 throw RuntimeException("failed to calcSalaryOfMonth.", it)
             }
         )
+    }
+
+    private fun sendToSftp(employeeSalaries: List<EmployeeSalary>, yearMonth: YearMonth) {
+        val csv = employeeSalaries.asSequence().map { EmployeeSalaryCSV.of(it) }.toList()
+
+        val tmpDir = System.getProperty("java.io.tmpdir").let {
+            val separator = System.getProperty("file.separator")
+            if (it.takeLast(1) != separator) {
+                it + separator
+            } else {
+                it
+            }
+        }
+
+        val filePath = "${tmpDir}employeeSalaries_${yearMonth}_${
+            // TODO 同じ名前のファイル名がSFTPサーバー上に存在する場合にエラーとなるのでタイムスタンプ付与
+            DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now())
+        }.csv"
+
+        runCatching {
+            FileWriter(filePath).use { writer ->
+                val beanToCsv = StatefulBeanToCsvBuilder<EmployeeSalaryCSV>(writer).build()
+                beanToCsv.write(csv)
+            }
+
+            val file = Paths.get(filePath).toFile()
+
+            val sftpClient = SftpClientBuilder.build(sftpConfig)
+            sftpClient.setRemoteDirectoryExpression(LiteralExpression(sftpConfig.subdir))
+            sftpClient.send(
+                MessageBuilder.withPayload(file).build()
+            )
+
+            file.delete()
+
+        }.onFailure {
+            Paths.get(filePath).toFile().delete()
+            throw it
+        }
     }
 }

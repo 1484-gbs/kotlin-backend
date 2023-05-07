@@ -11,3 +11,10 @@ app:
   rate:
     employment-increase: '0.003'
     welfare-increase: '0.20'
+
+  sftp:
+    host: localhost
+    port: 2222
+    user: admin
+    password: password
+    subdir: data

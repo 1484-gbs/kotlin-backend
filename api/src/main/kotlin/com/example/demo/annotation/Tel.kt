@@ -3,7 +3,6 @@ package com.example.demo.annotation
 import jakarta.validation.Constraint
 import jakarta.validation.Payload
 import org.hibernate.validator.constraints.Length
-import java.lang.annotation.*
 import kotlin.reflect.KClass
 
 @MustBeDocumented

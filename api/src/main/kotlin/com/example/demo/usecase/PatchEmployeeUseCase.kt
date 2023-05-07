@@ -34,7 +34,7 @@ class PatchEmployeeUseCaseCaseImpl(
     private val s3Client: S3Client
 ) : PatchEmployeeUseCase, AbstractEmployeeUseCase(skillMapper, positionMapper) {
     override fun execute(id: Long, request: PatchEmployeeRequest, user: UserDetailImpl.UserDetail) {
-        val employee = employeeMapper.findById(id)
+        val employee = employeeMapper.findEmployeeAndSkillById(id)
             ?: throw NotFoundException("employee not exists. id: $id.")
 
         // ADMIN can update all user. other user can update just me.
@@ -73,16 +73,27 @@ class PatchEmployeeUseCaseCaseImpl(
             )
         )
 
-        employeeSkillMapper.deleteByEmployeeId(id)
-        request.skills.takeIf {
+        val insertSkill = request.skills.filter { s -> !employee.skills.contains(s) }
+        val deleteSkill = employee.skills.filter { s -> !request.skills.contains(s) }
+
+        deleteSkill.takeIf {
+            it.isNotEmpty()
+        }?.let {
+            employeeSkillMapper.deleteByEmployeeIdAndSkillIds(
+                employeeId = id,
+                skillIds = it
+            )
+        }
+
+        insertSkill.takeIf {
             it.isNotEmpty()
         }?.let {
             employeeSkillMapper.bulkInsert(
-                request.skills.asSequence().map {
+                it.asSequence().map { skillId ->
                     EmployeeSkill(
                         employeeSkillId = 0, // auto_increment
                         employeeId = id,
-                        skillId = it,
+                        skillId = skillId,
                         lastModifiedBy = user.loginId,
                         lastModifiedAt = now,
                     )

@@ -5,7 +5,6 @@ import jakarta.validation.Payload
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import org.hibernate.validator.constraints.Length
-import java.lang.annotation.*
 import kotlin.reflect.KClass
 
 @MustBeDocumented
