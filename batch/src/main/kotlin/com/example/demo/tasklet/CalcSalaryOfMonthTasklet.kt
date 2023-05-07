@@ -151,12 +151,14 @@ class CalcSalaryOfMonthTasklet(
 
             val sftpFilePath = "${sftpConfig.subdir}${sftpClient.remoteFileSeparator}${fileName}"
             var sftpOldFilePath = ""
-            if (sftpClient.exists(sftpFilePath)) {
+            sftpClient.takeIf{
+                it.exists(sftpFilePath)
+            }?.let {
                 sftpOldFilePath = "${sftpFilePath}_old_${
                     DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now())
                 }"
                 // 既存ファイルrename
-                sftpClient.rename(sftpFilePath,sftpOldFilePath)
+                it.rename(sftpFilePath,sftpOldFilePath)
             }
 
             // ファイル送信
@@ -165,8 +167,10 @@ class CalcSalaryOfMonthTasklet(
             )
 
             // 送信完了したらoldファイル削除
-            if (sftpOldFilePath.isNotEmpty()){
-                sftpClient.remove(sftpOldFilePath)
+            sftpOldFilePath.takeIf{
+                it.isNotEmpty()
+            }?.let{
+                sftpClient.remove(it)
             }
 
             tmpFile.delete()
