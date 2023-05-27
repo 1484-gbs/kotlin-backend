@@ -15,6 +15,10 @@
           #{entity.otpReqId},
           #{entity.expiredAt}
         )
+        ON DUPLICATE KEY UPDATE
+          one_time_token = VALUES(one_time_token),
+          otp_req_id = VALUES(otp_req_id),
+          expired_at = VALUES(expired_at)
     </insert>
     <delete id="deleteByEmployeeId">
         DELETE FROM
