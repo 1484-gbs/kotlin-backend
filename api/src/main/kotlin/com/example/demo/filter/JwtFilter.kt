@@ -24,7 +24,7 @@ class JwtFilter(
 
     companion object {
         private const val BEARER = "Bearer "
-        private val IGNORE_URL = listOf("/login", "/health")
+        private val IGNORE_URL = listOf("/login", "/health", "/2fa")
     }
 
     private val log = LoggerFactory.getLogger(this::class.java)

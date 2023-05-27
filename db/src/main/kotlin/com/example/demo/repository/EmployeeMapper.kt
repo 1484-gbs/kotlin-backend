@@ -47,4 +47,11 @@ interface EmployeeMapper {
     fun findByLoginId(@Param("loginId") loginId: String): Employee?
 
     fun findByTokenId(@Param("tokenId") tokenId: String): EmployeeRole?
+
+    fun findByLoginIdValidToken(
+        @Param("loginId") loginId: String,
+        @Param("oneTimeToken") oneTimeToken: String,
+        @Param("otpReqId") otpReqId: String,
+        @Param("now") now: LocalDateTime
+    ): Employee?
 }

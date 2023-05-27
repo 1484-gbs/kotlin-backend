@@ -36,6 +36,11 @@ app:
           url: /employee
         - method: DELETE
           url: /employee/.*"
+  is2fa: true
+  isDebug: true
+  oneTimeToken:
+    expiredAtTime: 5
+
 logging:
   level:
     com:

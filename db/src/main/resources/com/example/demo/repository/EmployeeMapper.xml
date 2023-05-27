@@ -182,4 +182,24 @@
     <sql id="selectAll">
         SELECT * FROM employee
     </sql>
+    <select id="findByLoginIdValidToken" resultType="com.example.demo.entity.Employee">
+        <![CDATA[
+        SELECT
+          e.*
+        FROM
+          employee e
+        INNER JOIN
+          one_time_token o
+        ON
+          e.employee_id = o.employee_id
+        WHERE
+          e.login_id = #{loginId}
+        AND
+          o.one_time_token = #{oneTimeToken}
+        AND
+          o.otp_req_id = #{otpReqId}
+        AND
+          o.expired_at >= #{now}
+        ]]>
+    </select>
 </mapper>
