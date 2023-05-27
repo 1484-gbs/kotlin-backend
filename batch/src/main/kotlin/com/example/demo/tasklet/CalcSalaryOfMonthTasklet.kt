@@ -26,7 +26,6 @@ import java.math.RoundingMode
 import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 
 
 @Component
@@ -146,34 +145,18 @@ class CalcSalaryOfMonthTasklet(
 
             val tmpFile = Paths.get(tmpFilePath).toFile()
 
-            val sftpClient = SftpClientBuilder.build(sftpConfig)
-            sftpClient.setRemoteDirectoryExpression(LiteralExpression(sftpConfig.subdir))
-
-            val sftpFilePath = "${sftpConfig.subdir}${sftpClient.remoteFileSeparator}${fileName}"
-            var sftpOldFilePath = ""
-            sftpClient.takeIf{
-                it.exists(sftpFilePath)
-            }?.let {
-                sftpOldFilePath = "${sftpFilePath}_old_${
-                    DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now())
-                }"
-                // 既存ファイルrename
-                it.rename(sftpFilePath,sftpOldFilePath)
+            val sftpClient = SftpClientBuilder.build(sftpConfig).apply {
+                this.setRemoteDirectoryExpression(LiteralExpression(sftpConfig.subdir))
+                // これがないと同名ファイル上書き時にエラーとなる
+                this.isUseTemporaryFileName = false
             }
 
             // ファイル送信
             sftpClient.send(
                 MessageBuilder.withPayload(tmpFile).build()
-            )
-
-            // 送信完了したらoldファイル削除
-            sftpOldFilePath.takeIf{
-                it.isNotEmpty()
-            }?.let{
-                sftpClient.remove(it)
+            ).also {
+                tmpFile.delete()
             }
-
-            tmpFile.delete()
 
         }.onFailure {
             Paths.get(tmpFilePath).toFile().delete()
