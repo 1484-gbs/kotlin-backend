@@ -1,9 +1,6 @@
 package com.example.demo.repository
 
-import com.example.demo.entity.Employee
-import com.example.demo.entity.EmployeeAndSkill
-import com.example.demo.entity.EmployeeList
-import com.example.demo.entity.EmployeeRole
+import com.example.demo.entity.*
 import com.example.demo.type.GenderType
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
@@ -27,7 +24,7 @@ interface EmployeeMapper {
     fun updateTokenById(
         @Param("employeeId") employeeId: Long,
         @Param("token") token: String,
-        @Param("loginId") loginId: String,
+        @Param("updatedBy") updatedBy: String,
         @Param("now") now: LocalDateTime
     )
 
@@ -50,8 +47,7 @@ interface EmployeeMapper {
 
     fun findByLoginIdValidToken(
         @Param("loginId") loginId: String,
-        @Param("oneTimeToken") oneTimeToken: String,
         @Param("otpReqId") otpReqId: String,
         @Param("now") now: LocalDateTime
-    ): Employee?
+    ): EmployeeTwoFactorAuth?
 }

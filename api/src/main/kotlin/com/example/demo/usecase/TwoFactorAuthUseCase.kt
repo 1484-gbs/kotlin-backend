@@ -6,6 +6,7 @@ import com.example.demo.repository.OneTimeTokenMapper
 import com.example.demo.request.TwoFactorAuthRequest
 import com.example.demo.response.TwoFactorAuthResponse
 import com.example.demo.utils.JwtUtil
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -23,24 +24,27 @@ class TwoFactorAuthUseCaseCaseImpl(
 ) : TwoFactorAuthUseCase {
     override fun execute(request: TwoFactorAuthRequest): TwoFactorAuthResponse {
 
-        val employee =
+        val employeeTwoFactorAuth =
             employeeMapper.findByLoginIdValidToken(
                 request.loginId,
-                request.oneTimeToken,
                 request.otpReqId,
                 LocalDateTime.now()
             ) ?: throw InvalidRequestException("invalid request.")
 
-        val token = jwtUtil.create(employee.tokenId)
+        employeeTwoFactorAuth.oneTimeToken.takeIf {
+            BCryptPasswordEncoder().matches(request.oneTimeToken, it)
+        } ?: throw InvalidRequestException("one time token is incorrect.")
+
+        val token = jwtUtil.create(employeeTwoFactorAuth.tokenId)
 
         employeeMapper.updateTokenById(
-            employeeId = employee.employeeId,
+            employeeId = employeeTwoFactorAuth.employeeId,
             token = token,
-            loginId = employee.loginId,
+            updatedBy = employeeTwoFactorAuth.loginId,
             now = LocalDateTime.now(),
         )
 
-        oneTimeTokenMapper.deleteByEmployeeId(employee.employeeId)
+        oneTimeTokenMapper.deleteByEmployeeId(employeeTwoFactorAuth.employeeId)
 
         return TwoFactorAuthResponse(
             token = token

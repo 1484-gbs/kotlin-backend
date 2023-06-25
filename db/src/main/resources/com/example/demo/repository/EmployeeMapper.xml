@@ -80,7 +80,7 @@
             employee
         <set>
             token = #{token},
-            updated_by = #{loginId},
+            updated_by = #{updatedBy},
             updated_at = #{now}
         </set>
         WHERE
@@ -182,21 +182,22 @@
     <sql id="selectAll">
         SELECT * FROM employee
     </sql>
-    <select id="findByLoginIdValidToken" resultType="com.example.demo.entity.Employee">
+    <select id="findByLoginIdValidToken" resultType="com.example.demo.entity.EmployeeTwoFactorAuth">
         <![CDATA[
         SELECT
-          e.*
+          e.employee_id,
+          e.login_id,
+          e.token_id,
+          o.one_time_token
         FROM
           employee e
         INNER JOIN
           one_time_token o
         ON
           e.employee_id = o.employee_id
-        WHERE
+        AND
           e.login_id = #{loginId}
-        AND
-          o.one_time_token = #{oneTimeToken}
-        AND
+        WHERE
           o.otp_req_id = #{otpReqId}
         AND
           o.expired_at >= #{now}

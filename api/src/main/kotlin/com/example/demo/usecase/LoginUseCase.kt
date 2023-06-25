@@ -49,7 +49,7 @@ class LoginUseCaseCaseImpl(
             val otpReqId = UUID.randomUUID().toString()
             val entity = OneTimeToken(
                 employeeId = employee.employeeId,
-                oneTimeToken = oneTimeToken,
+                oneTimeToken = BCryptPasswordEncoder().encode(oneTimeToken),
                 otpReqId = otpReqId,
                 expiredAt = LocalDateTime.now().plusMinutes(expiredAtTime)
             )
@@ -68,7 +68,7 @@ class LoginUseCaseCaseImpl(
             employeeMapper.updateTokenById(
                 employeeId = employee.employeeId,
                 token = token,
-                loginId = employee.loginId,
+                updatedBy = employee.loginId,
                 now = LocalDateTime.now(),
             )
 
