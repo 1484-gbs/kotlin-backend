@@ -9,3 +9,4 @@
 - OpenCSV
 - Spring Security
 - JWT
+- AWS DynamoDB

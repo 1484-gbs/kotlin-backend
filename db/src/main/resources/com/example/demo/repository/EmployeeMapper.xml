@@ -63,12 +63,11 @@
         WHERE
           employee_id = #{entity.employeeId}
     </update>
-    <update id="updatePasswordAndTokenNullById">
+    <update id="updatePasswordById">
         UPDATE
             employee
         <set>
             password = #{password},
-            token = null,
             updated_by = #{updatedBy},
             updated_at = #{now}
         </set>
@@ -173,34 +172,13 @@
         <include refid="selectAll"/>
         <where>login_id = #{loginId}</where>
     </select>
-    <select id="findByTokenId" resultType="com.example.demo.entity.EmployeeRole">
+    <select id="findByIdJoinRole" resultType="com.example.demo.entity.EmployeeRole">
         SELECT e.*, p.role FROM employee e
         INNER JOIN position p
         ON e.position_id = p.position_id
-        <where>e.token_id = #{tokenId}</where>
+        <where>e.employee_id = #{employeeId}</where>
     </select>
     <sql id="selectAll">
         SELECT * FROM employee
     </sql>
-    <select id="findByLoginIdValidToken" resultType="com.example.demo.entity.EmployeeTwoFactorAuth">
-        <![CDATA[
-        SELECT
-          e.employee_id,
-          e.login_id,
-          e.token_id,
-          o.one_time_token
-        FROM
-          employee e
-        INNER JOIN
-          one_time_token o
-        ON
-          e.employee_id = o.employee_id
-        AND
-          e.login_id = #{loginId}
-        WHERE
-          o.otp_req_id = #{otpReqId}
-        AND
-          o.expired_at >= #{now}
-        ]]>
-    </select>
 </mapper>

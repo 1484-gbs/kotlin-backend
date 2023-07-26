@@ -1,17 +1,19 @@
 package com.example.demo.usecase
 
-import com.example.demo.entity.OneTimeToken
+import com.example.demo.client.DynamoDBClient
 import com.example.demo.exception.InvalidRequestException
 import com.example.demo.repository.EmployeeMapper
-import com.example.demo.repository.OneTimeTokenMapper
 import com.example.demo.request.LoginRequest
 import com.example.demo.response.LoginResponse
+import com.example.demo.type.dynamodb.OneTimeTokenType
 import com.example.demo.utils.JwtUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 interface LoginUseCase {
@@ -22,8 +24,8 @@ interface LoginUseCase {
 @Transactional
 class LoginUseCaseCaseImpl(
     private val employeeMapper: EmployeeMapper,
-    private val oneTimeTokenMapper: OneTimeTokenMapper,
     private val jwtUtil: JwtUtil,
+    private val dynamoDBClient: DynamoDBClient,
 ) : LoginUseCase {
 
     @Value("\${app.is2fa}")
@@ -47,14 +49,24 @@ class LoginUseCaseCaseImpl(
             // ワンタイムトークン生成
             val oneTimeToken = (Random().nextInt(1000000)).toString().padStart(6, '0')
             val otpReqId = UUID.randomUUID().toString()
-            val entity = OneTimeToken(
-                employeeId = employee.employeeId,
-                oneTimeToken = BCryptPasswordEncoder().encode(oneTimeToken),
-                otpReqId = otpReqId,
-                expiredAt = LocalDateTime.now().plusMinutes(expiredAtTime)
+
+            dynamoDBClient.putItem(
+                OneTimeTokenType.TABLE_NAME.value,
+                mapOf(
+                    OneTimeTokenType.EMPLOYEE_ID.value to
+                        AttributeValue.builder().n(employee.employeeId.toString()).build(),
+                    OneTimeTokenType.ONE_TIME_TOKEN.value to
+                        AttributeValue.builder().s(BCryptPasswordEncoder().encode(oneTimeToken)).build(),
+                    OneTimeTokenType.OPT_REQ_ID.value to
+                        AttributeValue.builder().s(otpReqId).build(),
+                    OneTimeTokenType.TTL.value to
+                        AttributeValue.builder().n(
+                            LocalDateTime.now().plusMinutes(expiredAtTime).atZone(ZoneId.systemDefault())
+                                .toEpochSecond().toString()
+                        ).build()
+                )
             )
 
-            oneTimeTokenMapper.create(entity)
 
             // TODO メール送信
 
@@ -63,13 +75,9 @@ class LoginUseCaseCaseImpl(
                 otpReqId = otpReqId,
             )
         } else {
-            val token = jwtUtil.create(employee.tokenId)
-
-            employeeMapper.updateTokenById(
-                employeeId = employee.employeeId,
-                token = token,
-                updatedBy = employee.loginId,
-                now = LocalDateTime.now(),
+            val token = jwtUtil.create(
+                tokenId = employee.tokenId,
+                employeeId = employee.employeeId
             )
 
             return LoginResponse(

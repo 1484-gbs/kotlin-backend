@@ -52,7 +52,6 @@ class CreateEmployeeUseCaseCaseImpl(
             loginId = request.loginId,
             password = BCryptPasswordEncoder().encode(request.password),
             tokenId = UUID.randomUUID().toString(),
-            token = null,
             createdBy = loginId,
             createdAt = now,
             updatedBy = loginId,

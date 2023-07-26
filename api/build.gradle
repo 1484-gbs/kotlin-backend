@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security:3.0.4'
     implementation 'com.auth0:java-jwt:4.3.0'
     implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation 'software.amazon.awssdk:dynamodb:2.20.110'
 
     implementation(project(':db'))
     implementation(project(':batch'))

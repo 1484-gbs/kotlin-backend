@@ -14,6 +14,10 @@ app:
       bucket: employee
       access-key: ${AWS_ACCESS_KEY_ID:minioadmin}
       secret-key: ${AWS_SECRET_ACCESS_KEY_ID:minioadmin}
+    dynamo-db:
+      url: ${AWS_S3_URL:http://127.0.0.1:8000}
+      access-key: ${AWS_ACCESS_KEY_ID:dummy}
+      secret-key: ${AWS_SECRET_ACCESS_KEY_ID:dummy}
 
   jwt:
     expired-hour: ${JWT_EXPIRED_HOUR:4}
