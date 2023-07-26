@@ -14,17 +14,10 @@ interface EmployeeMapper {
 
     fun update(@Param("entity") entity: Employee)
 
-    fun updatePasswordAndTokenNullById(
+    fun updatePasswordById(
         @Param("employeeId") employeeId: Long,
         @Param("updatedBy") updatedBy: String,
         @Param("password") password: String,
-        @Param("now") now: LocalDateTime
-    )
-
-    fun updateTokenById(
-        @Param("employeeId") employeeId: Long,
-        @Param("token") token: String,
-        @Param("updatedBy") updatedBy: String,
         @Param("now") now: LocalDateTime
     )
 
@@ -43,11 +36,6 @@ interface EmployeeMapper {
 
     fun findByLoginId(@Param("loginId") loginId: String): Employee?
 
-    fun findByTokenId(@Param("tokenId") tokenId: String): EmployeeRole?
+    fun findByIdJoinRole(@Param("employeeId") employeeId: Long): EmployeeRole?
 
-    fun findByLoginIdValidToken(
-        @Param("loginId") loginId: String,
-        @Param("otpReqId") otpReqId: String,
-        @Param("now") now: LocalDateTime
-    ): EmployeeTwoFactorAuth?
 }

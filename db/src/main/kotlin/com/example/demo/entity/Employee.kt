@@ -18,7 +18,6 @@ data class Employee(
     val loginId: String,
     val password: String,
     val tokenId: String,
-    val token: String?,
     val createdBy: String,
     val createdAt: LocalDateTime,
     val updatedBy: String?,
