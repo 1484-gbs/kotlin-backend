@@ -1,6 +1,7 @@
 package com.example.demo.client
 
 import com.example.demo.config.DynamoDBConfig
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
@@ -18,7 +19,10 @@ interface DynamoDBClient {
 @Component
 class DynamoDBClientImpl(
     private val dynamoDBConfig: DynamoDBConfig
-): DynamoDBClient {
+) : DynamoDBClient {
+
+    @Value("\${app.isLocal}")
+    private var isLocal: Boolean = false
 
     override fun getItem(tableName: String, key: Map<String, AttributeValue>): GetItemResponse {
         val req = GetItemRequest.builder()
@@ -46,15 +50,18 @@ class DynamoDBClientImpl(
 
     fun createClient(): DynamoDbClient {
         return DynamoDbClient.builder()
-            .region(Region.US_EAST_1)
-            .endpointOverride(URI.create(dynamoDBConfig.url))
             .credentialsProvider(
                 StaticCredentialsProvider.create(
                     AwsBasicCredentials.create(
                         dynamoDBConfig.accessKey, dynamoDBConfig.secretKey
                     )
                 )
-            )
+            ).apply {
+                if (isLocal) {
+                    this.region(Region.US_EAST_1)
+                    this.endpointOverride(URI.create(dynamoDBConfig.url))
+                }
+            }
             .build()
     }
 }

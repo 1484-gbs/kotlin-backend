@@ -42,6 +42,7 @@ app:
           url: /employee/.*"
   is2fa: true
   isDebug: true
+  isLocal: true
   oneTimeToken:
     expiredAtTime: 5
 

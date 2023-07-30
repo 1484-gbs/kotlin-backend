@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.util.Base64
 import com.example.demo.config.S3Config
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
@@ -30,6 +31,10 @@ interface S3Client {
 class S3ClientImpl(
     private val s3Config: S3Config
 ) : S3Client {
+
+    @Value("\${app.isLocal}")
+    private var isLocal: Boolean = false
+
     private val log = LoggerFactory.getLogger(this::class.java)
 
     override fun upload(base64: String, folder: String, fileName: String) {
@@ -85,16 +90,19 @@ class S3ClientImpl(
     private fun createClient(): AmazonS3 {
         return AmazonS3ClientBuilder
             .standard()
-            .withEndpointConfiguration(
-                AwsClientBuilder.EndpointConfiguration(
-                    s3Config.url, Regions.US_EAST_1.name
-                )
-            )
             .withCredentials(
                 AWSStaticCredentialsProvider(
                     BasicAWSCredentials(s3Config.accessKey, s3Config.secretKey)
                 )
-            )
+            ).apply {
+                if (isLocal) {
+                    this.withEndpointConfiguration(
+                        AwsClientBuilder.EndpointConfiguration(
+                            s3Config.url, Regions.US_EAST_1.name
+                        )
+                    )
+                }
+            }
             .build()
     }
 }
