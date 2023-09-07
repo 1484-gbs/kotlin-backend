@@ -15,7 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val jwtFilter: JwtFilter,
     private val roleFilter: RoleFilter,
-    private val requestResponseLoggingFilter: RequestResponseLoggingFilter) {
+    private val requestResponseLoggingFilter: RequestResponseLoggingFilter
+) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {

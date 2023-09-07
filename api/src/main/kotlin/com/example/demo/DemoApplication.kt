@@ -1,8 +1,8 @@
 package com.example.demo
 
 import com.example.demo.client.DynamoDBClientImpl
-import com.example.demo.type.dynamodb.JwtType
 import com.example.demo.type.dynamodb.OneTimeTokenType
+import com.example.demo.type.dynamodb.TokenType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -33,13 +33,13 @@ private fun createDynamoDbTables(client: DynamoDbClient) {
     )
 
     createDynamoDbTable(
-        client, tableNames, JwtType.TABLE_NAME.value,
+        client, tableNames, TokenType.TABLE_NAME.value,
         KeySchemaElement.builder()
-            .attributeName(JwtType.TOKEN_ID.value)
+            .attributeName(TokenType.TOKEN_ID.value)
             .keyType(KeyType.HASH)
             .build(),
         AttributeDefinition.builder()
-            .attributeName(JwtType.TOKEN_ID.value)
+            .attributeName(TokenType.TOKEN_ID.value)
             .attributeType(ScalarAttributeType.S)
             .build(),
         OneTimeTokenType.TTL.value

@@ -1,19 +1,20 @@
 package com.example.demo.filter
 
-import com.auth0.jwt.exceptions.JWTVerificationException
 import com.example.demo.client.DynamoDBClient
 import com.example.demo.dto.UserDetailImpl
 import com.example.demo.exception.ApplicationException
 import com.example.demo.exception.handler.UnAuthorizeException
 import com.example.demo.repository.EmployeeMapper
-import com.example.demo.type.dynamodb.JwtType
+import com.example.demo.type.dynamodb.TokenType
 import com.example.demo.utils.JwtUtil
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -29,7 +30,8 @@ class JwtFilter(
 
     companion object {
         private const val BEARER = "Bearer "
-        private val IGNORE_URL = listOf("/login", "/health", "/2fa")
+        private val IGNORE_URL = listOf("/login", "/health", "/2fa", "/refresh_token")
+        private val OPEN_API = listOf("/v3/api-docs", "/v3/api-docs/.*", "/swagger-ui.html", "/swagger-ui/.*")
     }
 
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -41,6 +43,9 @@ class JwtFilter(
     ) {
         runCatching {
             if (IGNORE_URL.contains(request.requestURI)) {
+                return@runCatching
+            }
+            OPEN_API.firstOrNull { o -> request.requestURI.matches(Regex(o)) }?.let {
                 return@runCatching
             }
 
@@ -66,19 +71,19 @@ class JwtFilter(
             log.info("tokenId: $tokenId")
 
             val dynamoJwt = dynamoDBClient.getItem(
-                JwtType.TABLE_NAME.value,
+                TokenType.TABLE_NAME.value,
                 mapOf(
-                    JwtType.TOKEN_ID.value
+                    TokenType.TOKEN_ID.value
                         to AttributeValue.builder().s(tokenId).build()
                 )
             ).item().takeIf {
-                it.isNotEmpty() && it[JwtType.TOKEN.value]?.s() == token
+                it.isNotEmpty() && it[TokenType.ACCESS_TOKEN.value]?.s() == token
             } ?: run {
                 log.warn("invalid token.")
                 throw UnAuthorizeException()
             }
 
-            dynamoJwt[JwtType.EMPLOYEE_ID.value]?.n()?.let {
+            dynamoJwt[TokenType.EMPLOYEE_ID.value]?.n()?.let {
                 val employee = employeeMapper.findByIdJoinRole(it.toLong())
                     ?: run {
                         log.warn("employee not found. employee id: $it")
@@ -104,9 +109,16 @@ class JwtFilter(
             onFailure =
             { ex ->
                 when (ex) {
-                    is UnAuthorizeException,
-                    is JWTVerificationException -> response.status =
-                        HttpStatus.UNAUTHORIZED.value()
+                    is UnAuthorizeException -> {
+                        response.status =
+                            HttpStatus.UNAUTHORIZED.value()
+                        ex.message?.let {
+                            response.contentType = MediaType.APPLICATION_JSON_VALUE
+                            response.writer.write(
+                                ObjectMapper().writeValueAsString(mapOf("message" to it))
+                            )
+                        }
+                    }
 
                     else -> {
                         log.error("unexpected error", ex)

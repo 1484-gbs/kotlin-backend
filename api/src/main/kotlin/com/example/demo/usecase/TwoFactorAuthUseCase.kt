@@ -58,7 +58,8 @@ class TwoFactorAuthUseCaseCaseImpl(
         )
 
         return TwoFactorAuthResponse(
-            token = token
+            accessToken = token.first,
+            refreshToken = token.second
         )
     }
 }

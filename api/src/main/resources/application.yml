@@ -20,7 +20,11 @@ app:
       secret-key: ${AWS_SECRET_ACCESS_KEY_ID:dummy}
 
   jwt:
-    expired-hour: ${JWT_EXPIRED_HOUR:4}
+    accessToken:
+      expired-minutes: ${ACCESS_TOKEN_EXPIRED_TIME:60}
+    refreshToken:
+      expired-minutes: ${REFRESH_TOKEN_EXPIRED_TIME:240}
+      length: ${REFRESH_TOKEN_LENGTH:120}
     secret: ${JWT_SECRET:gbservice}
     aud: ${JWT_AUD:https://gbservice.co.jp}
     sub: ${JWT_sub:gbs}

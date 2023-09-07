@@ -13,6 +13,12 @@ import java.net.URI
 interface DynamoDBClient {
     fun getItem(tableName: String, key: Map<String, AttributeValue>): GetItemResponse
     fun putItem(tableName: String, item: Map<String, AttributeValue>): PutItemResponse
+    fun updateItem(
+        tableName: String,
+        key: Map<String, AttributeValue>,
+        item: Map<String, AttributeValueUpdate>
+    ): UpdateItemResponse
+
     fun deleteItem(tableName: String, key: Map<String, AttributeValue>): DeleteItemResponse
 }
 
@@ -21,7 +27,7 @@ class DynamoDBClientImpl(
     private val dynamoDBConfig: DynamoDBConfig
 ) : DynamoDBClient {
 
-    @Value("\${app.isLocal}")
+    @Value("\${app.isLocal:false}")
     private var isLocal: Boolean = false
 
     override fun getItem(tableName: String, key: Map<String, AttributeValue>): GetItemResponse {
@@ -38,6 +44,19 @@ class DynamoDBClientImpl(
             .item(item)
             .build()
         return createClient().putItem(req)
+    }
+
+    override fun updateItem(
+        tableName: String,
+        key: Map<String, AttributeValue>,
+        item: Map<String, AttributeValueUpdate>
+    ): UpdateItemResponse {
+        val req = UpdateItemRequest.builder()
+            .tableName(tableName)
+            .key(key)
+            .attributeUpdates(item)
+            .build()
+        return createClient().updateItem(req)
     }
 
     override fun deleteItem(tableName: String, key: Map<String, AttributeValue>): DeleteItemResponse {

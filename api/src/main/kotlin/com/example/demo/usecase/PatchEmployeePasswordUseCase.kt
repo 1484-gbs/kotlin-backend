@@ -7,7 +7,7 @@ import com.example.demo.exception.NotFoundException
 import com.example.demo.repository.EmployeeMapper
 import com.example.demo.request.PatchEmployeePasswordRequest
 import com.example.demo.type.RoleType
-import com.example.demo.type.dynamodb.JwtType
+import com.example.demo.type.dynamodb.TokenType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,9 +40,9 @@ class PatchEmployeePasswordUseCaseImpl(
         )
 
         dynamoDBClient.deleteItem(
-            JwtType.TABLE_NAME.value,
+            TokenType.TABLE_NAME.value,
             mapOf(
-                JwtType.TOKEN_ID.value
+                TokenType.TOKEN_ID.value
                 to AttributeValue.builder().s(employee.tokenId).build()
             )
         )

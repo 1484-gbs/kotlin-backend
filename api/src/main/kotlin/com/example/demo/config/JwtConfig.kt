@@ -6,8 +6,18 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "app.jwt")
 class JwtConfig {
-    lateinit var expiredHour: String
+    var accessToken: AccessToken = AccessToken()
+    var refreshToken: RefreshToken = RefreshToken()
     lateinit var secret: String
     lateinit var aud: String
     lateinit var sub: String
+
+    class AccessToken {
+        var expiredMinutes: Long = 0
+    }
+
+    class RefreshToken {
+        var expiredMinutes: Long = 0
+        var length: Int = 0
+    }
 }

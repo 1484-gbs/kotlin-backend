@@ -6,7 +6,9 @@ import com.example.demo.repository.EmployeeMapper
 import com.example.demo.request.LoginRequest
 import com.example.demo.response.LoginResponse
 import com.example.demo.type.dynamodb.OneTimeTokenType
+import com.example.demo.type.dynamodb.TokenType
 import com.example.demo.utils.JwtUtil
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -28,14 +30,17 @@ class LoginUseCaseCaseImpl(
     private val dynamoDBClient: DynamoDBClient,
 ) : LoginUseCase {
 
-    @Value("\${app.is2fa}")
+    @Value("\${app.is2fa:true}")
     private var is2fa: Boolean = true
 
-    @Value("\${app.oneTimeToken.expiredAtTime}")
+    @Value("\${app.oneTimeToken.expiredAtTime:0}")
     private var expiredAtTime: Long = 0
 
-    @Value("\${app.isDebug}")
+    @Value("\${app.isDebug:false}")
     private var isDebug: Boolean = false
+
+    @Value("\${app.oneTimeToken.length:6}")
+    private var oneTimeTokenLength: Int = 6
 
     override fun execute(request: LoginRequest): LoginResponse {
         val employee = employeeMapper.findByLoginId(request.loginId)
@@ -47,7 +52,8 @@ class LoginUseCaseCaseImpl(
 
         if (is2fa) {
             // ワンタイムトークン生成
-            val oneTimeToken = (Random().nextInt(1000000)).toString().padStart(6, '0')
+            //val oneTimeToken = (Random().nextInt(1000000)).toString().padStart(6, '0')
+            val oneTimeToken = RandomStringUtils.random(oneTimeTokenLength, true, true)
             val otpReqId = UUID.randomUUID().toString()
 
             dynamoDBClient.putItem(
@@ -67,11 +73,19 @@ class LoginUseCaseCaseImpl(
                 )
             )
 
+            // token削除
+            dynamoDBClient.deleteItem(
+                TokenType.TABLE_NAME.value,
+                mapOf(
+                    TokenType.TOKEN_ID.value
+                        to AttributeValue.builder().s(employee.tokenId).build()
+                )
+            )
 
             // TODO メール送信
 
             return LoginResponse(
-                token = if (isDebug) oneTimeToken else null,
+                onetimeToken = if (isDebug) oneTimeToken else null,
                 otpReqId = otpReqId,
             )
         } else {
@@ -81,7 +95,8 @@ class LoginUseCaseCaseImpl(
             )
 
             return LoginResponse(
-                token = token
+                accessToken = token.first,
+                refreshToken = token.second
             )
         }
     }

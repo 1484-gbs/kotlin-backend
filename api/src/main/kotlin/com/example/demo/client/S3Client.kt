@@ -32,7 +32,7 @@ class S3ClientImpl(
     private val s3Config: S3Config
 ) : S3Client {
 
-    @Value("\${app.isLocal}")
+    @Value("\${app.isLocal:false}")
     private var isLocal: Boolean = false
 
     private val log = LoggerFactory.getLogger(this::class.java)
