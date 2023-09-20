@@ -42,7 +42,7 @@ private fun createDynamoDbTables(client: DynamoDbClient) {
             .attributeName(TokenType.TOKEN_ID.value)
             .attributeType(ScalarAttributeType.S)
             .build(),
-        OneTimeTokenType.TTL.value
+        TokenType.TTL.value
     )
 }
 

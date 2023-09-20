@@ -69,14 +69,16 @@ class RoleFilter(
                 return false
             }
 
-        denyUrlSplit.indices.forEach { idx ->
-            (reqUrlSplit[idx].matches(Regex(denyUrlSplit[idx])))
-                .takeUnless {
-                    it
-                }?.run {
-                    return false
-                }
+//        denyUrlSplit.indices.forEach { idx ->
+//            (reqUrlSplit[idx].matches(Regex(denyUrlSplit[idx])))
+//                .takeUnless {
+//                    it
+//                }?.run {
+//                    return false
+//                }
+//        }
+        return denyUrlSplit.zip(reqUrlSplit).all { (deny, req) ->
+            req.matches(Regex(deny))
         }
-        return true
     }
 }

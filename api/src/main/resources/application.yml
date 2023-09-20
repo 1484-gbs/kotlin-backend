@@ -36,14 +36,14 @@ app:
         - method: POST
           url: /employee/calc_salary
         - method: DELETE
-          url: /employee/.*"
+          url: /employee/.*
       general:
         - method: POST
           url: /employee/calc_salary
         - method: POST
           url: /employee
         - method: DELETE
-          url: /employee/.*"
+          url: /employee/.*
   is2fa: true
   isDebug: true
   isLocal: true
