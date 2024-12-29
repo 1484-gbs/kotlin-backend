@@ -62,13 +62,17 @@ class RoleFilter(
         val denyUrlSplit = denyUrl.split("/").filter { u -> u.isNotEmpty() }
         val reqUrlSplit = reqUrl.split("/").filter { u -> u.isNotEmpty() }
 
-        (denyUrlSplit.size != reqUrlSplit.size)
-            .takeIf {
-                it
-            }?.run {
-                return false
-            }
-
+//        (denyUrlSplit.size != reqUrlSplit.size)
+//            .takeIf {
+//                it
+//            }?.run {
+//                return false
+//            }
+        denyUrlSplit.size.takeIf {
+            it != reqUrlSplit.size
+        } ?.run {
+            return false
+        }
 //        denyUrlSplit.indices.forEach { idx ->
 //            (reqUrlSplit[idx].matches(Regex(denyUrlSplit[idx])))
 //                .takeUnless {

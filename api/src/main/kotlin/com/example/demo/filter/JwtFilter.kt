@@ -42,10 +42,13 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
         runCatching {
-            if (IGNORE_URL.contains(request.requestURI)) {
+            IGNORE_URL.takeIf {
+                it.contains(request.requestURI)
+            } ?.run {
                 return@runCatching
             }
-            OPEN_API.firstOrNull { o -> request.requestURI.matches(Regex(o)) }?.let {
+
+            OPEN_API.firstOrNull { o -> request.requestURI.matches(Regex(o)) }?.run {
                 return@runCatching
             }
 
@@ -62,8 +65,8 @@ class JwtFilter(
 
             val tokenId = jwtUtil.getClimeString(jwt, JwtUtil.JwtClaimType.TOKEN_ID)
                 .takeIf {
-                    !it.isNullOrEmpty()
-                } ?: run {
+                    it.isNullOrEmpty()
+                } ?.run {
                 log.warn("token_id is null or empty.")
                 throw UnAuthorizeException()
             }

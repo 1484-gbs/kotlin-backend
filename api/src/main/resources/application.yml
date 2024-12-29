@@ -3,6 +3,10 @@ spring:
     include:
       - db
       - batch
+  mail:
+    host: aspmx.l.google.com
+    port: 25
+    from: test@test.com
 
 app:
   postal-code:

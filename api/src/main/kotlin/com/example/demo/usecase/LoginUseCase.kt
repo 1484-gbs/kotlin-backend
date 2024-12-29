@@ -7,6 +7,7 @@ import com.example.demo.request.LoginRequest
 import com.example.demo.response.LoginResponse
 import com.example.demo.type.dynamodb.OneTimeTokenType
 import com.example.demo.type.dynamodb.TokenType
+import com.example.demo.usecase.common.SendMail
 import com.example.demo.utils.JwtUtil
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Value
@@ -28,6 +29,7 @@ class LoginUseCaseCaseImpl(
     private val employeeMapper: EmployeeMapper,
     private val jwtUtil: JwtUtil,
     private val dynamoDBClient: DynamoDBClient,
+    private val sendMail: SendMail,
 ) : LoginUseCase {
 
     @Value("\${app.is2fa:true}")
@@ -82,7 +84,12 @@ class LoginUseCaseCaseImpl(
                 )
             )
 
-            // TODO メール送信
+            // TODO 文章など
+            sendMail.send(
+                mailAddress = employee.loginId,
+                subject = "",
+                text = oneTimeToken
+            )
 
             return LoginResponse(
                 onetimeToken = if (isDebug) oneTimeToken else null,
