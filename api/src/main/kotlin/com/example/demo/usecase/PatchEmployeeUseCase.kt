@@ -65,8 +65,8 @@ class PatchEmployeeUseCaseCaseImpl(
                 loginId = "", // Mapperでupdateしない
                 password = "", // Mapperでupdateしない
                 tokenId = "", // Mapperでupdateしない
-                createdBy = user.loginId,
-                createdAt = now,
+                createdBy = user.loginId, // Mapperでupdateしない
+                createdAt = now, // Mapperでupdateしない
                 updatedBy = user.loginId,
                 updatedAt = now,
             )

@@ -85,11 +85,11 @@ class LoginUseCaseCaseImpl(
             )
 
             // TODO 文章など
-            sendMail.send(
-                mailAddress = employee.loginId,
-                subject = "",
-                text = oneTimeToken
-            )
+//            sendMail.send(
+//                mailAddress = employee.loginId,
+//                subject = "",
+//                text = oneTimeToken
+//            )
 
             return LoginResponse(
                 onetimeToken = if (isDebug) oneTimeToken else null,

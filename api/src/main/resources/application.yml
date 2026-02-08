@@ -14,12 +14,12 @@ app:
 
   aws:
     s3:
-      url: ${AWS_S3_URL:http://127.0.0.1:9000}
+      url: ${AWS_S3_URL:http://minio:9000}
       bucket: employee
       access-key: ${AWS_ACCESS_KEY_ID:minioadmin}
       secret-key: ${AWS_SECRET_ACCESS_KEY_ID:minioadmin}
     dynamo-db:
-      url: ${AWS_S3_URL:http://127.0.0.1:8000}
+      url: ${AWS_S3_URL:http://dynamodb-local:8000}
       access-key: ${AWS_ACCESS_KEY_ID:dummy}
       secret-key: ${AWS_SECRET_ACCESS_KEY_ID:dummy}
 
@@ -31,7 +31,7 @@ app:
       length: ${REFRESH_TOKEN_LENGTH:120}
     secret: ${JWT_SECRET:gbservice}
     aud: ${JWT_AUD:https://gbservice.co.jp}
-    sub: ${JWT_sub:gbs}
+    sub: ${JWT_SUB:gbs}
 
   role:
     deny-url:

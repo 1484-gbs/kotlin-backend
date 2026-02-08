@@ -1,6 +1,28 @@
-version: '3'
+name: kotlin-backend
 
 services:
+  api:
+    build:
+      context: ./../
+      dockerfile: ./Dockerfile
+    container_name: api-container
+    volumes:
+      - ./api/build/classes/kotlin/main:/app/api/build/classes
+      - ./api/build/resources/main:/app/api/build/resources
+    ports:
+      - "8080:8080"
+      - "5005:5005"  #デバッグ用
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/employee
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+#    command: java -cp "/app/api/build/resources:/app/api/build/classes:/app/api/build/libs/*" com.example.demo.DemoApplication
+    depends_on:
+      - db
+      - dynamodb-local
+
   # MySQL
   db:
     image: mysql

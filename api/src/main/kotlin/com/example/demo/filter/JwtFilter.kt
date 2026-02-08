@@ -66,10 +66,10 @@ class JwtFilter(
             val tokenId = jwtUtil.getClimeString(jwt, JwtUtil.JwtClaimType.TOKEN_ID)
                 .takeIf {
                     it.isNullOrEmpty()
-                } ?.run {
-                log.warn("token_id is null or empty.")
-                throw UnAuthorizeException()
-            }
+                } ?: run {
+                    log.warn("token_id is null or empty.")
+                    throw UnAuthorizeException()
+                }
 
             log.info("tokenId: $tokenId")
 

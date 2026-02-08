@@ -2,7 +2,8 @@
 /**/.idea/
 /**/build/
 *.DS_Store
-
+htmlReport/*
+docker/*
 HELP.md
 .gradle
 build/
