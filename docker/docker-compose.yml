@@ -6,15 +6,16 @@ services:
       context: ./../
       dockerfile: ./Dockerfile
     container_name: api-container
+    volumes:
+      - ./../:/app
     ports:
       - "8080:8080"
-      - "5005:5005"  #デバッグ用
+      - "5005:5005"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/employee
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
-      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      SPRING_DEVTOOLS_REMOTE_SECRET: secret
     depends_on:
       - db
       - dynamodb-local
@@ -24,6 +25,8 @@ services:
       context: ./../
       dockerfile: ./Dockerfile_batch
     container_name: batch-container
+    volumes:
+      - ./../:/app
     ports:
       - "8081:8081"
       - "5006:5006"  #デバッグ用
@@ -31,7 +34,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/employee
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
-      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      AWS_DYNAMODB_URL: http://dynamodb-local:8000
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     depends_on:
       - db

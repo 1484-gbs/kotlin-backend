@@ -55,6 +55,11 @@ project(':api') {
         enabled = true
     }
 
+    bootRun {
+        systemProperties = System.properties
+        jvmArgs=["-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005"]
+    }
+
     jar {
         enabled = true
     }

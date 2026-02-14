@@ -7,6 +7,16 @@ spring:
     host: aspmx.l.google.com
     port: 25
     from: test@test.com
+  devtools:
+    restart:
+      enabled: true
+      # リスタート時に古いコンテキストを破棄するのを待機する時間（必要に応じて）
+      poll-interval: 2s
+      quiet-period: 1s
+    livereload:
+      enabled: true
+    remote:
+      secret: secret
 
 app:
   postal-code:
@@ -19,7 +29,7 @@ app:
       access-key: ${AWS_ACCESS_KEY_ID:minioadmin}
       secret-key: ${AWS_SECRET_ACCESS_KEY_ID:minioadmin}
     dynamo-db:
-      url: ${AWS_S3_URL:http://dynamodb-local:8000}
+      url: ${AWS_DYNAMODB_URL:http://dynamodb-local:8000}
       access-key: ${AWS_ACCESS_KEY_ID:dummy}
       secret-key: ${AWS_SECRET_ACCESS_KEY_ID:dummy}
 
